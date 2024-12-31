@@ -1,0 +1,15 @@
+.filtersContainer{
+    background-color: #13aa53c2;
+    border-radius: 7px;
+}
+.filtersContainer div:first-child, .filtersContainer div:nth-child(2){
+    margin: 2px 0 2px 0 !important;
+}
+.filtersContainer .col{
+    max-width: fit-content;
+}
+.filtersContainer .col strong{
+    height: 100%;
+    align-content: center;
+}
+
