@@ -1,0 +1,14 @@
+.imageUpload{
+    border: 1px solid grey;
+    border-radius: 15px;
+    border-style: dashed;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(.4,0,.2,1);
+    transition-duration: .15s;
+}
+.imageUploadChildContainer{
+    height: 150px;
+}
+.cursorPointer{
+    cursor: pointer;
+}
