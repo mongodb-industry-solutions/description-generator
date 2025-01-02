@@ -25,6 +25,23 @@ export async function fetchDescriptions(body) {
   return descriptions;
 }
 
+export async function deleteDescriptions(props) {
+  let {_id, imageUrl} = props
+
+  const response = await fetch("/api/deleteDescriptions", {
+    method: "POST",
+    body: JSON.stringify({
+      _id,
+      imageUrl
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`Error fetching cart: ${response.status}`);
+  }
+  const descriptions = await response.json();
+  return descriptions;
+}
+
 export async function updateDescriptionsToMongoDB(props) {
   let {descriptions, length, model, imageUrl} = props
   const response = await fetch("/api/updateDescriptions", {

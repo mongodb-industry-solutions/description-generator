@@ -3,6 +3,7 @@ import Image from 'next/image';
 import IconButton from '@leafygreen-ui/icon-button';
 import XIcon from '@leafygreen-ui/icon/dist/X';
 import UploadIcon from '@leafygreen-ui/icon/dist/Upload';
+import FileIcon from '@leafygreen-ui/icon/dist/File';
 
 import styles from "./imageUpload.module.css";
 
@@ -35,9 +36,14 @@ const ImageUpload = (props) => {
               alt='Product'
             ></Image>
           </div>
-          : <div onClick={() => imageInputRef.current.click()} className={`${styles.imageUploadChildContainer} ${styles.cursorPointer} d-flex flex-column align-items-center justify-content-center`}>
-            <UploadIcon size="xlarge" />
-            <p className='mt-2'>Upload product image</p>
+          : <div 
+            //onClick={() => imageInputRef.current.click()} 
+            className={`${styles.imageUploadChildContainer} ${styles.cursorPointe} d-flex flex-column align-items-center justify-content-center`}
+          >
+            <UploadIcon size="xlarge" className='d-none' />
+            <FileIcon size="xlarge" className='' />
+            <p className='mt-2 d-none'>Upload product image</p>
+            <p className='mt-2'>Product image</p>
             <input
               ref={imageInputRef}
               id="image-upload"

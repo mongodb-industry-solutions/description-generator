@@ -117,9 +117,14 @@ export default function Home() {
     if (response) {
       setGeneratingDescription(false);
       setDescriptions(response.descriptions);
+      // TODO set alert of "Storing description of product ${product._id} in MongoDB"
       const updateMDB = await updateDescriptionsToMongoDB(response)
       if (updateMDB.modifiedCount === 1) {
         dispatch(updateProductDescriptions({ ...body, descriptions: response.descriptions }))
+        // TODO set alert of "Description of product ${product._id} stored in MongoDB"
+      }else{
+        // TODO set alert of "Error storing description of product ${product._id} in MongoDB"
+
       }
     }
     setGeneratingDescription(false);
@@ -183,8 +188,8 @@ export default function Home() {
             </div>
             <ImageUpload image={image} setImage={setImage} uploadToS3={uploadToS3} />
 
-            <div onClick={() => onLoadSampleImage()} className={`${styles.cursorPointer} d-flex flex-row-reverse mb-3`}>
-              <small className={`${styles.sampleText} mt-1`}>Use sample image from catalog</small>
+            <div className={`d-flex flex-row-reverse mb-3`}>
+              <small onClick={() => onLoadSampleImage()}  className={`${styles.cursorPointer} ${styles.sampleText} mt-1`}>Use sample image from catalog</small>
             </div>
 
             <DescriptionInput
@@ -235,7 +240,7 @@ export default function Home() {
                 :
                 descriptions == null
                   ? <div className={`${styles.rightSideContainer} d-flex justify-content-center align-items-center`}>
-                    <h5 className='text-secondary'>See your generated descriptions here</h5>
+                    <h5 className='text-secondary pt-3 pb-3 mt-3 mb-3'>See your generated descriptions here</h5>
                   </div>
                   : <div className=''>
                     <h4>Generated descriptions</h4>
