@@ -1,6 +1,6 @@
 "use client"
 
-import { fetchProducts } from '@/lib/api';
+import { deleteDescriptions, fetchProducts } from '@/lib/api';
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -13,15 +13,16 @@ import {
     TableHead,
 } from '@leafygreen-ui/table';
 import Spinner from 'react-bootstrap/Spinner';
+
 //import Code from '@leafygreen-ui/code';
 import CurlyBracesIcon from '@leafygreen-ui/icon/dist/CurlyBraces';
 import TrashIcon from '@leafygreen-ui/icon/dist/Trash';
 import IconButton from '@leafygreen-ui/icon-button';
 import Image from 'next/image';
-import { Container } from 'react-bootstrap';
+import { Container, Toast } from 'react-bootstrap';
 
 import './catalog.css'
-import { setInitialLoad, setOpenedProductDetails, setProducts } from '@/redux/slices/ProductsSlice';
+import { deleteProductDescriptions, setInitialLoad, setOpenedProductDetails, setProducts } from '@/redux/slices/ProductsSlice';
 import ModalContainer from '@/components/modalContainer/ModalContainer';
 import JsonDisplay from '@/components/jsonDisplayComp/JsonDisplayComp';
 import DescriptionInput from '@/components/descriptionInput/DescriptionInput';
@@ -46,17 +47,73 @@ const lengths = [
 
 export default function Page() {
     const dispatch = useDispatch();
-    const [open, setOpen] = useState(false)
+    // const { pushToast, clearStack, getStack, updateToast } = useToast();
+    // const stack = getStack();
     const catalog = useSelector(state => state.Products.products)
     const openedProductDetails = useSelector(state => state.Products.openedProductDetails)
     const initialLoad = useSelector(state => state.Products.initialLoad)
+    const [open, setOpen] = useState(false)
     const [modelOptions, setModelOptions] = useState(models)
     const [model, setModel] = useState(models[0].value);
     const [lengthOptions, setLengthOptions] = useState(lengths)
     const [length, setLength] = useState(lengths[0].value);
+    const [toasts, setToasts] = useState({ list: [], change: true })
 
-    const onDeleteDescriptions = () => {
+    const addToast = (id, variant, title, description, open) => {
+        setToasts({
+            list: [...toasts.list, {
+                id,
+                variant,
+                title,
+                description,
+                open
+            }],
+            change: !toasts.change
+        });
+    };
+    const closeToast = (id) => {
+        setToasts(prevState =>
+              ({ 
+                change: !prevState.change, 
+                list: prevState.list.filter(t => t.id !== id)
+            })
+            )
+    }
 
+    const onDeleteDescriptions = (product) => {
+
+        const delProductDescriptions = async () => {
+            const deletingId = new Date()
+            addToast(
+                deletingId,
+                'progress',
+                `Delete operation`,
+                `Deleting descriptions of product ${product._id}`,
+                true
+            )
+            try {
+                const response = await deleteDescriptions({ _id: product._id, imageUrl: product.imageUrl });
+                closeToast(deletingId)
+                if (response.modifiedCount > 0) {
+                    // TODO set alert of "Descriptions of product ${product._id} deletd"
+                    dispatch(deleteProductDescriptions({ _id: response._id, imageUrl: response.imageUrl }))
+                    // const sucId = new Date()
+                    // addToast(
+                    //     sucId,
+                    //     'success',
+                    //     `Delete operation`,
+                    //     `Descriptions of product ${product._id} deleted`,
+                    //     true
+                    // )
+                    alert("Descriptions of product deleted")
+                }
+            } catch (error) {
+                // TODO set alert of "Error deleting descriptions of product ${product._id}"
+                alert("Error deleting descriptions of product")
+                console.error("There was a problem deleting the prodict's descriptions:", error);
+            }
+        };
+        delProductDescriptions();
     }
     const onSeeFullDocument = (product) => {
         setOpen(true)
@@ -99,10 +156,33 @@ export default function Page() {
         getAllCatalogProducts();
     }, [])
 
+
+
     return (
         <div className=''>
             <h2 className="mt-3 mb-3 text-center text-2xl font-bold">Product Catalog</h2>
             <Container>
+                <ol className='toastContainer'>
+                {
+                    toasts.list
+                    .filter(toast => toast.open === true)
+                    .map((toast, index) => {
+                        console.log(toast)
+                        return  <li key={index}>
+                        <Toast
+                            ///key={index}
+                            className="d-inline-block m-1"
+                            bg={'dark'}
+                        >
+                            <Toast.Body className={ 'text-white'}>
+                            {toast.description}
+                            </Toast.Body>
+                        </Toast>
+                        </li>
+                    }
+                    )
+                }
+                </ol>
                 <div className={`row filtersContainer`}>
                     <div className={` col-12 col-md-6 mb-3 text-center`}>
                         <div className='d-flex flex-row'>
@@ -130,7 +210,7 @@ export default function Page() {
                             <Spinner animation="border" variant="secondary" />
                             <h4 className='text-secondary mt-2'>Loading</h4>
                         </div>
-                        : <Table>
+                        : <Table  className='myTable'>
                             <TableHead>
                                 <HeaderRow>
                                     <HeaderCell>ID</HeaderCell>
@@ -157,27 +237,32 @@ export default function Page() {
                                             </Cell>
                                             <Cell>
                                                 {
-                                                    product.descriptions?.es?.[`${length}_${model.replaceAll('.', '')}`] ||  'n/a'
-                                                }                                            
-                                            </Cell>
-                                            <Cell>
-                                                {
-                                                    product.descriptions?.en?.[`${length}_${model.replaceAll('.', '')}`] ||  'n/a'
-                                                }
-                                            </Cell>                                            
-                                            <Cell>
-                                                {
-                                                    product.descriptions?.fr?.[`${length}_${model.replaceAll('.', '')}`] ||  'n/a'
+                                                    product.descriptions?.es?.[`${length}_${model.replaceAll('.', '')}`] || 'n/a'
                                                 }
                                             </Cell>
                                             <Cell>
-                                                <IconButton onClick={() => onSeeFullDocument(product)} aria-label="Some Menu" title='See full document'>
+                                                {
+                                                    product.descriptions?.en?.[`${length}_${model.replaceAll('.', '')}`] || 'n/a'
+                                                }
+                                            </Cell>
+                                            <Cell>
+                                                {
+                                                    product.descriptions?.fr?.[`${length}_${model.replaceAll('.', '')}`] || 'n/a'
+                                                }
+                                            </Cell>
+                                            <Cell>
+                                                <IconButton
+                                                    onClick={() => onSeeFullDocument(product)}
+                                                    aria-label="Some Menu"
+                                                    title='See full document'
+                                                >
                                                     <CurlyBracesIcon />
                                                 </IconButton>
-                                                <IconButton 
-                                                    aria-label="Some Menu" 
+                                                <IconButton
+                                                    aria-label="Some Menu"
                                                     title='Delete descriptions'
-                                                    className='d-none'
+                                                    className=''
+                                                    onClick={() => onDeleteDescriptions(product)}
                                                 >
                                                     <TrashIcon />
                                                 </IconButton>
