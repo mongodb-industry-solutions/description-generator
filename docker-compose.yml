@@ -1,10 +1,10 @@
 services:
-  app:
+  description-generator:
     build:
       context: .
       dockerfile: Dockerfile.app
-    image: app:latest
+    image: description-generator:latest
     ports:
       - "3003:3003"
     restart: always
-    container_name: app
+    container_name: description-generator

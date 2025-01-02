@@ -141,7 +141,7 @@ export default function Home() {
     // TODO. use sampleImageLoading variable to handle loading state while the api is retrieving the sample image
     // when sampleImageLoading  is true the button "Use sample image from catalog" should be disabled and have opacity
     // when sampleImageLoading  is true the ImageUpload component should show a Loading spinner
-    setImage("https://m.media-amazon.com/images/I/71GJ66eES2L.jpg")//"https://m.media-amazon.com/images/I/81kl6o8ORML.jpg")
+    setImage("https://m.media-amazon.com/images/I/81seiXB5drL.jpg")
   }
 
   useEffect(() => {
