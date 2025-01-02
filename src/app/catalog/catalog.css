@@ -22,3 +22,7 @@
 .toastContainer li{
     list-style-type: none;
   }
+  .myTable {
+    max-height: 800px;
+    overflow: auto;
+}

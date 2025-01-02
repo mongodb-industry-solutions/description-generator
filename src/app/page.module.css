@@ -47,3 +47,7 @@
 .cursorPointer{
     cursor: pointer;
 }
+.myTable {
+    max-height: 800px;
+    overflow: auto;
+}

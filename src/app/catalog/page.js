@@ -210,7 +210,7 @@ export default function Page() {
                             <Spinner animation="border" variant="secondary" />
                             <h4 className='text-secondary mt-2'>Loading</h4>
                         </div>
-                        : <Table>
+                        : <Table  className='myTable'>
                             <TableHead>
                                 <HeaderRow>
                                     <HeaderCell>ID</HeaderCell>
