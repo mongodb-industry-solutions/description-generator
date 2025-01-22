@@ -12,111 +12,54 @@ import { fetchDescriptions, fetchProducts, updateDescriptionsToMongoDB } from '@
 import { setInitialLoad, setProducts, updateProductDescriptions } from '@/redux/slices/ProductsSlice';
 import TextInput from '@leafygreen-ui/text-input';
 import { getProductImageFromObjectId } from '@/lib/helpers';
+import { setLanguage, setLength, setModel, setImage, setResult, setGeneratingDescription } from '@/redux/slices/FormSlice';
+import DescriptionOutput from '@/components/descriptionOutput/DescriptionOutput';
 
-const models = [
-  {
-    value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-    label: "Llama 3.2 11B",
-    isSelected: true
-  },
-  {
-    value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-    label: "Llama 3.2 90B",
-    isSelected: false
-  },
-];
-const languages = [
-  { value: "en", label: "English", isSelected: true },
-  { value: "es", label: "Spanish", isSelected: false },
-  { value: "fr", label: "French", isSelected: false },
-  { value: "de", label: "German", isSelected: false },
-  { value: "it", label: "Italian", isSelected: false },
-  { value: "ja", label: "Japanese", isSelected: false },
-  { value: "ko", label: "Korean", isSelected: false },
-  { value: "zh", label: "Chinese", isSelected: false },
-  { value: "pt", label: "Portuguese", isSelected: false },
-];
-const lengths = [
-  { value: "short", label: "Short", isSelected: true },
-  { value: "medium", label: "Medium", isSelected: false },
-  { value: "long", label: "Long", isSelected: false },
-];
 
 export default function Home() {
   const dispatch = useDispatch();
+  const image = useSelector(state => state.Form.image)
+  const selectedModel = useSelector(state => state.Form.selectedModel)
+  const modelOptions = useSelector(state => state.Form.models)
+  const selectedLength = useSelector(state => state.Form.selectedLength)
+  const lengthOptions = useSelector(state => state.Form.lengths)
+  const selectedLanguages = useSelector(state => state.Form.selectedLanguages)
+  const languagesOptions = useSelector(state => state.Form.languages)
+  const result = useSelector(state => state.Form.result)
+  const generatingDescription = useSelector(state => state.Form.generatingDescription)
+
   const initialLoad = useSelector(state => state.Products.initialLoad)
   const catalogLength = useSelector(state => state.Products.products?.length)
   const productIdRef = useRef(null)
 
-  const [modelOptions, setModelOptions] = useState(models)
-  const [model, setModel] = useState(models[0].value);
-  const [languageOptions, setLanguageOptions] = useState(languages)
-  const [language, setLanguage] = useState([languages[0].value]);
-  const [lengthOptions, setLengthOptions] = useState(lengths)
-  const [length, setLength] = useState(lengths[0].value);
-  const [image, setImage] = useState(null);
   const [sampleImageLoading, setSampleImageLoading] = useState(false)
-  const [generatingDescription, setGeneratingDescription] = useState(false)
-  const [descriptions, setDescriptions] = useState(null)
   const { uploadToS3 } = useS3Upload();
 
   const onModelChange = (selectedOption) => {
-    setModel(selectedOption.value)
-    setModelOptions(prevState =>
-      prevState.map(option => {
-        return { ...option, isSelected: option.value === selectedOption.value }
-      }
-      ))
+    dispatch(setModel(selectedOption.value))
   }
   const onLanguageChange = (selectedOption) => {
-    if (language.includes(selectedOption.value)) {
-      //remove language from selection
-      const filteredLanguages = language.filter(l => l !== selectedOption.value);
-      setLanguage(filteredLanguages);
-      setLanguageOptions(prevState =>
-        prevState.map(option => {
-          return option.value === selectedOption.value
-            ? { ...option, isSelected: false }
-            : { ...option }
-        }
-        ))
-      return;
-    }
-    // add language to selection
-    setLanguage([...language, selectedOption.value]);
-    setLanguageOptions(prevState =>
-      prevState.map(option => {
-        return option.value === selectedOption.value
-          ? { ...option, isSelected: true }
-          : { ...option }
-      }
-      ))
+    dispatch(setLanguage(selectedOption.value))    
   }
   const onLengthChange = (selectedOption) => {
-    setLength(selectedOption.value)
-    setLengthOptions(prevState =>
-      prevState.map(option => {
-        console.log(option)
-        console.log(selectedOption)
-        return { ...option, isSelected: option.value === selectedOption.value }
-      }
-      ))
+    dispatch(setLength(selectedOption.value))
   }
   const onGenerateClick = async () => {
-    console.log(model, language, length, image)
+    console.log(selectedModel, selectedLanguages, selectedLength, image)
     const body = {
-      languages: language,
+      languages: selectedLanguages,
       imageUrl: image,
-      model,
-      length
+      model: selectedModel,
+      length: selectedLength
     }
-    if ((language.length < 1 || language.length > 3) || !image)
+    if ((selectedLanguages.length < 1 || selectedLanguages.length > 3) || !image)
       return;
-    setGeneratingDescription(true);
+    dispatch(setGeneratingDescription(true));
     const response = await fetchDescriptions(body)
     if (response) {
-      setGeneratingDescription(false);
-      setDescriptions(response.descriptions);
+      console.log(response)
+      dispatch(setResult(response))
+      dispatch(setGeneratingDescription(false));
       // TODO set alert of "Storing description of product ${product._id} in MongoDB"
       const updateMDB = await updateDescriptionsToMongoDB(response)
       if (updateMDB.modifiedCount === 1) {
@@ -127,12 +70,12 @@ export default function Home() {
 
       }
     }
-    setGeneratingDescription(false);
+    dispatch(setGeneratingDescription(false));
   }
   const onLoadImageFromObjectId = () => {
     const imageId = getProductImageFromObjectId(productIdRef.current.value)
     console.log(imageId)
-    setImage(imageId)
+    dispatch(setImage(imageId))
   }
   const onLoadSampleImage = () => {
     // TODO. replace this hard coded URL with an API call that:
@@ -141,7 +84,7 @@ export default function Home() {
     // TODO. use sampleImageLoading variable to handle loading state while the api is retrieving the sample image
     // when sampleImageLoading  is true the button "Use sample image from catalog" should be disabled and have opacity
     // when sampleImageLoading  is true the ImageUpload component should show a Loading spinner
-    setImage("https://m.media-amazon.com/images/I/81seiXB5drL.jpg")
+    dispatch(setImage("https://m.media-amazon.com/images/I/81seiXB5drL.jpg"))    
   }
 
   useEffect(() => {
@@ -202,9 +145,9 @@ export default function Home() {
             <DescriptionInput
               title="Languages"
               description="Choose up to 3 languages for the product descriptions."
-              options={languageOptions}
+              options={languagesOptions}
               onSelectionChange={onLanguageChange}
-              disableUnselectedOptions={language.length >= 3}
+              disableUnselectedOptions={selectedLanguages.length >= 3}
             />
             <hr />
             <DescriptionInput
@@ -216,7 +159,7 @@ export default function Home() {
             <div className="d-flex flex-row-reverse mb-3 mt-3">
               <Button
                 className={`mt-3 ${styles.submitBtn}`}
-                disabled={language.length === 0 || image === null || generatingDescription}
+                disabled={selectedLanguages.length === 0 || image === null || generatingDescription}
                 onClick={() => onGenerateClick()}
               >
                 {
@@ -238,18 +181,19 @@ export default function Home() {
                   <p>Loading Descriptions ...</p>
                 </div>
                 :
-                descriptions == null
+                result?.descriptions == null
                   ? <div className={`${styles.rightSideContainer} d-flex justify-content-center align-items-center`}>
                     <h5 className='text-secondary pt-3 pb-3 mt-3 mb-3'>See your generated descriptions here</h5>
                   </div>
                   : <div className=''>
                     <h4>Generated descriptions</h4>
                     {
-                      descriptions.map((description, index) => (
-                        <div key={index}>
-                          <h5 className='text-start'>{languages.find(l => l.value === description.language).label}</h5>
-                          <p className='text-secondary text-start' style={{ fontSize: '15px' }}>{description.description}</p>
-                        </div>
+                      result?.descriptions.map((description, index) => (
+                        <DescriptionOutput 
+                          key={index}
+                          language={languagesOptions.find(l => l.value === description.language).label}
+                          description={description.description}
+                        />
                       ))
                     }
                   </div>

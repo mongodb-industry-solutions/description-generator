@@ -214,11 +214,11 @@ export default function Page() {
                             <TableHead>
                                 <HeaderRow>
                                     <HeaderCell>ID</HeaderCell>
-                                    <HeaderCell>Product</HeaderCell>
-                                    <HeaderCell>Spanish</HeaderCell>
-                                    <HeaderCell>English</HeaderCell>
-                                    <HeaderCell>French</HeaderCell>
-                                    <HeaderCell></HeaderCell>
+                                    <HeaderCell style={{minWidth: '100px'}}>Product</HeaderCell>
+                                    <HeaderCell style={{minWidth: 'auto'}}>Spanish</HeaderCell>
+                                    <HeaderCell style={{minWidth: 'auto'}}>English</HeaderCell>
+                                    <HeaderCell style={{minWidth: 'auto'}}>French</HeaderCell>
+                                    <HeaderCell style={{minWidth: '89px'}}></HeaderCell>
                                 </HeaderRow>
                             </TableHead>
                             <TableBody>

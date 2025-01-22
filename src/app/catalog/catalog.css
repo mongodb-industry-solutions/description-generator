@@ -26,3 +26,10 @@
     max-height: 800px;
     overflow: auto;
 }
+.container table tr:nth-child(even){
+    background-color: #f8f8f8
+}
+.container table tr td p{
+    width: 100%;
+    text-align: center;
+}
