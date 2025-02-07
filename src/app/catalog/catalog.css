@@ -12,17 +12,7 @@
     height: 100%;
     align-content: center;
 }
-
-.toastContainer{
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 1;
-}
-.toastContainer li{
-    list-style-type: none;
-  }
-  .myTable {
+.myTable {
     max-height: 800px;
     overflow: auto;
 }

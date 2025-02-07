@@ -26,90 +26,49 @@ import { deleteProductDescriptions, setInitialLoad, setOpenedProductDetails, set
 import ModalContainer from '@/components/modalContainer/ModalContainer';
 import JsonDisplay from '@/components/jsonDisplayComp/JsonDisplayComp';
 import DescriptionInput from '@/components/descriptionInput/DescriptionInput';
-
-const models = [
-    {
-        value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-        label: "Llama 3.2 11B",
-        isSelected: true
-    },
-    {
-        value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-        label: "Llama 3.2 90B",
-        isSelected: false
-    },
-];
-const lengths = [
-    { value: "short", label: "Short", isSelected: true },
-    { value: "medium", label: "Medium", isSelected: false },
-    { value: "long", label: "Long", isSelected: false },
-];
+import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlert, closeAlertWithDelay } from '@/lib/alerts';
+import { setLengthFilter, setModelFilter } from '@/redux/slices/FormSlice';
 
 export default function Page() {
     const dispatch = useDispatch();
-    // const { pushToast, clearStack, getStack, updateToast } = useToast();
-    // const stack = getStack();
     const catalog = useSelector(state => state.Products.products)
+    const modelOptions = useSelector(state => state.Form.models)
+    const lengthOptions = useSelector(state => state.Form.lengths)
     const openedProductDetails = useSelector(state => state.Products.openedProductDetails)
     const initialLoad = useSelector(state => state.Products.initialLoad)
     const [open, setOpen] = useState(false)
-    const [modelOptions, setModelOptions] = useState(models)
-    const [model, setModel] = useState(models[0].value);
-    const [lengthOptions, setLengthOptions] = useState(lengths)
-    const [length, setLength] = useState(lengths[0].value);
-    const [toasts, setToasts] = useState({ list: [], change: true })
-
-    const addToast = (id, variant, title, description, open) => {
-        setToasts({
-            list: [...toasts.list, {
-                id,
-                variant,
-                title,
-                description,
-                open
-            }],
-            change: !toasts.change
-        });
-    };
-    const closeToast = (id) => {
-        setToasts(prevState =>
-              ({ 
-                change: !prevState.change, 
-                list: prevState.list.filter(t => t.id !== id)
-            })
-            )
-    }
+    const selectedModel = useSelector(state => state.Form.models?.find(model => model.isSelectedFilter === true).value)
+    console.log(selectedModel)
+    const selectedLength = useSelector(state => state.Form.lengths?.find(length => length.isSelectedFilter === true).value)
 
     const onDeleteDescriptions = (product) => {
 
         const delProductDescriptions = async () => {
             const deletingId = new Date()
-            addToast(
-                deletingId,
-                'progress',
-                `Delete operation`,
-                `Deleting descriptions of product ${product._id}`,
-                true
-            )
+            addOperationAlert({
+                id: deletingId.getMilliseconds(),
+                title: 'Delete operation',
+                message: `Deleting descriptions of product ${product._id}`
+            })
             try {
                 const response = await deleteDescriptions({ _id: product._id, imageUrl: product.imageUrl });
-                closeToast(deletingId)
-                if (response.modifiedCount > 0) {
-                    // TODO set alert of "Descriptions of product ${product._id} deletd"
+                if (response.modifiedCount > 0 || response.acknowledged == true) {
                     dispatch(deleteProductDescriptions({ _id: response._id, imageUrl: response.imageUrl }))
-                    // const sucId = new Date()
-                    // addToast(
-                    //     sucId,
-                    //     'success',
-                    //     `Delete operation`,
-                    //     `Descriptions of product ${product._id} deleted`,
-                    //     true
-                    // )
-                    alert("Descriptions of product deleted")
+                    addSucAutoCloseAlertHnd({
+                        id: (new Date()).getMilliseconds(),
+                        title: 'Delete operation',
+                        message: `Descriptions of product ${product._id} deleted`,
+                        duration: 4000
+                    })
+                    closeAlertWithDelay(deletingId.getMilliseconds(), 1500)
                 }
             } catch (error) {
-                // TODO set alert of "Error deleting descriptions of product ${product._id}"
-                alert("Error deleting descriptions of product")
+                addWarnAutoCloseAlertHnd({
+                    id: (new Date()).getMilliseconds(),
+                    title: 'Delete operation',
+                    message: `Error deleting descriptions of product`,
+                    duration: 4000
+                })
                 console.error("There was a problem deleting the prodict's descriptions:", error);
             }
         };
@@ -120,22 +79,10 @@ export default function Page() {
         dispatch(setOpenedProductDetails(product))
     }
     const onModelChange = (selectedOption) => {
-        setModel(selectedOption.value)
-        setModelOptions(prevState =>
-            prevState.map(option => {
-                return { ...option, isSelected: option.value === selectedOption.value }
-            }
-            ))
+        dispatch(setModelFilter(selectedOption.value))
     }
     const onLengthChange = (selectedOption) => {
-        setLength(selectedOption.value)
-        setLengthOptions(prevState =>
-            prevState.map(option => {
-                console.log(option)
-                console.log(selectedOption)
-                return { ...option, isSelected: option.value === selectedOption.value }
-            }
-            ))
+        dispatch(setLengthFilter(selectedOption.value))
     }
     useEffect(() => {
         if (initialLoad == true || catalog.length > 0)
@@ -156,33 +103,10 @@ export default function Page() {
         getAllCatalogProducts();
     }, [])
 
-
-
     return (
         <div className=''>
             <h2 className="mt-3 mb-3 text-center text-2xl font-bold">Product Catalog</h2>
             <Container>
-                <ol className='toastContainer'>
-                {
-                    toasts.list
-                    .filter(toast => toast.open === true)
-                    .map((toast, index) => {
-                        console.log(toast)
-                        return  <li key={index}>
-                        <Toast
-                            ///key={index}
-                            className="d-inline-block m-1"
-                            bg={'dark'}
-                        >
-                            <Toast.Body className={ 'text-white'}>
-                            {toast.description}
-                            </Toast.Body>
-                        </Toast>
-                        </li>
-                    }
-                    )
-                }
-                </ol>
                 <div className={`row filtersContainer`}>
                     <div className={` col-12 col-md-6 mb-3 text-center`}>
                         <div className='d-flex flex-row'>
@@ -190,6 +114,7 @@ export default function Page() {
                                 title="Model"
                                 options={modelOptions}
                                 onSelectionChange={onModelChange}
+                                selectedFieldName='isSelectedFilter'
                             />
 
                         </div>
@@ -200,6 +125,7 @@ export default function Page() {
                                 title="Length"
                                 options={lengthOptions}
                                 onSelectionChange={onLengthChange}
+                                selectedFieldName='isSelectedFilter'
                             />
                         </div>
                     </div>
@@ -210,15 +136,15 @@ export default function Page() {
                             <Spinner animation="border" variant="secondary" />
                             <h4 className='text-secondary mt-2'>Loading</h4>
                         </div>
-                        : <Table  className='myTable'>
+                        : <Table className='myTable'>
                             <TableHead>
                                 <HeaderRow>
                                     <HeaderCell>ID</HeaderCell>
-                                    <HeaderCell style={{minWidth: '100px'}}>Product</HeaderCell>
-                                    <HeaderCell style={{minWidth: 'auto'}}>Spanish</HeaderCell>
-                                    <HeaderCell style={{minWidth: 'auto'}}>English</HeaderCell>
-                                    <HeaderCell style={{minWidth: 'auto'}}>French</HeaderCell>
-                                    <HeaderCell style={{minWidth: '89px'}}></HeaderCell>
+                                    <HeaderCell style={{ minWidth: '100px' }}>Product</HeaderCell>
+                                    <HeaderCell style={{ minWidth: 'auto' }}>Spanish</HeaderCell>
+                                    <HeaderCell style={{ minWidth: 'auto' }}>English</HeaderCell>
+                                    <HeaderCell style={{ minWidth: 'auto' }}>French</HeaderCell>
+                                    <HeaderCell style={{ minWidth: '89px' }}></HeaderCell>
                                 </HeaderRow>
                             </TableHead>
                             <TableBody>
@@ -237,17 +163,17 @@ export default function Page() {
                                             </Cell>
                                             <Cell>
                                                 {
-                                                    product.descriptions?.es?.[`${length}_${model.replaceAll('.', '')}`] || 'n/a'
+                                                    product.descriptions?.es?.[`${selectedLength}_${selectedModel.replaceAll('.', '')}`] || 'n/a'
                                                 }
                                             </Cell>
                                             <Cell>
                                                 {
-                                                    product.descriptions?.en?.[`${length}_${model.replaceAll('.', '')}`] || 'n/a'
+                                                    product.descriptions?.en?.[`${selectedLength}_${selectedModel.replaceAll('.', '')}`] || 'n/a'
                                                 }
                                             </Cell>
                                             <Cell>
                                                 {
-                                                    product.descriptions?.fr?.[`${length}_${model.replaceAll('.', '')}`] || 'n/a'
+                                                    product.descriptions?.fr?.[`${selectedLength}_${selectedModel.replaceAll('.', '')}`] || 'n/a'
                                                 }
                                             </Cell>
                                             <Cell>

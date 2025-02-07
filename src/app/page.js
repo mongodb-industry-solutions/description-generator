@@ -14,6 +14,7 @@ import TextInput from '@leafygreen-ui/text-input';
 import { getProductImageFromObjectId } from '@/lib/helpers';
 import { setLanguage, setLength, setModel, setImage, setResult, setGeneratingDescription } from '@/redux/slices/FormSlice';
 import DescriptionOutput from '@/components/descriptionOutput/DescriptionOutput';
+import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlert, closeAlertWithDelay } from '@/lib/alerts';
 
 
 export default function Home() {
@@ -45,13 +46,13 @@ export default function Home() {
     dispatch(setLength(selectedOption.value))
   }
   const onGenerateClick = async () => {
-    console.log(selectedModel, selectedLanguages, selectedLength, image)
     const body = {
       languages: selectedLanguages,
       imageUrl: image,
       model: selectedModel,
       length: selectedLength
     }
+    console.log(body)
     if ((selectedLanguages.length < 1 || selectedLanguages.length > 3) || !image)
       return;
     dispatch(setGeneratingDescription(true));
@@ -60,15 +61,16 @@ export default function Home() {
       console.log(response)
       dispatch(setResult(response))
       dispatch(setGeneratingDescription(false));
-      // TODO set alert of "Storing description of product ${product._id} in MongoDB"
+      const updateMDBRes = new Date()
+      addOperationAlert({id: updateMDBRes.getMilliseconds(), title: 'Update One operation', message: 'Saving descriptions of product in MongoDB'})
       const updateMDB = await updateDescriptionsToMongoDB(response)
       if (updateMDB.modifiedCount === 1) {
         dispatch(updateProductDescriptions({ ...body, descriptions: response.descriptions }))
-        // TODO set alert of "Description of product ${product._id} stored in MongoDB"
+        addSucAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Description of product stored in MongoDB`})
       }else{
-        // TODO set alert of "Error storing description of product ${product._id} in MongoDB"
-
+        addWarnAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Error storing description of product in MongoDB`})
       }
+      closeAlertWithDelay(updateMDBRes.getMilliseconds(), 1500)
     }
     dispatch(setGeneratingDescription(false));
   }
@@ -91,15 +93,21 @@ export default function Home() {
     if (initialLoad == true || catalogLength > 0)
       return
     const getAllCatalogProducts = async () => {
+      const alertFetchProds = 'alertFetchProds'
       dispatch(setInitialLoad(true))
+      addOperationAlert({id: alertFetchProds, title: 'Loading catalog'})
       try {
         const response = await fetchProducts();
         console.log(response.length)
-        if (response)
+        if (response){
           dispatch(setProducts(response))
+          addSucAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'Catalog loaded', duration: 3000 })
+        }
         dispatch(setInitialLoad(false))
+        closeAlert(alertFetchProds)
       } catch (error) {
         dispatch(setInitialLoad(false))
+        closeAlertWithDelay(alertFetchProds)
         console.error("There was a problem with your fetch operation:", error);
       }
     };
