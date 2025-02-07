@@ -10,7 +10,8 @@ const DescriptionInput = (props) => {
         description = '', 
         options = [],
         onSelectionChange, 
-        disableUnselectedOptions = false
+        disableUnselectedOptions = false,
+        selectedFieldName = 'isSelected'
     } = props;
 
 
@@ -32,8 +33,8 @@ const DescriptionInput = (props) => {
                             <Button
                                 key={index}
                                 onClick={() => onSelectionChange(option)}
-                                className={` me-1 mb-1 ${styles.optionBtn} ${option.isSelected === true ? styles.selected : ''}`}
-                                disabled={disableUnselectedOptions && !option.isSelected}
+                                className={` me-1 mb-1 ${styles.optionBtn} ${option[selectedFieldName] === true ? styles.selected : ''}`}
+                                disabled={disableUnselectedOptions && !option[selectedFieldName]}
                             >
                                 {option.label}
                             </Button>

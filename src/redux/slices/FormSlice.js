@@ -1,18 +1,48 @@
-import { LANGUAGES, LENGTHS, MODELS } from "@/lib/helpers";
 import { createSlice } from "@reduxjs/toolkit";
-import { act } from "react";
 
+export const MODELS = [
+    {
+      value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
+      label: "Llama 3.2 11B",
+      isSelected: true,
+      isSelectedFilter: true
+
+    },
+    {
+      value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
+      label: "Llama 3.2 90B",
+      isSelected: false,
+      isSelectedFilter: false
+    },
+  ];
+  export const LANGUAGES = [
+    { value: "en", label: "English", isSelected: true },
+    { value: "es", label: "Spanish", isSelected: false },
+    { value: "fr", label: "French", isSelected: false },
+    { value: "de", label: "German", isSelected: false },
+    { value: "it", label: "Italian", isSelected: false },
+    { value: "ja", label: "Japanese", isSelected: false },
+    { value: "ko", label: "Korean", isSelected: false },
+    { value: "zh", label: "Chinese", isSelected: false },
+    { value: "pt", label: "Portuguese", isSelected: false },
+  ];
+  export const LENGTHS = [
+    { value: "short", label: "Short", isSelected: true, isSelectedFilter: true },
+    { value: "medium", label: "Medium", isSelected: false, isSelectedFilter: false },
+    { value: "long", label: "Long", isSelected: false, isSelectedFilter: false },
+  ];
+  
 const FormSlice = createSlice({
     name: "Form",
     initialState: {
         descriptionIsLoading: false,
         error: null,         // null or {msg: ""}
         image: null, // null or image URL
-        selectedModel: MODELS[0].value,
+        selectedModel: MODELS[0]?.value,
         models: MODELS,
-        selectedLength: LENGTHS[0].value,
+        selectedLength: LENGTHS[0]?.value,
         lengths: LENGTHS,
-        selectedLanguages: [LANGUAGES[0].value],
+        selectedLanguages: [LANGUAGES[0]?.value],
         languages: LANGUAGES,
         result: null, // null or [] ,
         generatingDescription: false
@@ -38,6 +68,17 @@ const FormSlice = createSlice({
         setLength: (state, action) => {
             let newState = { ...state, selectedLength: action.payload }
             newState.lengths = newState.lengths.map(length => ({ ...length, isSelected: length.value === action.payload }))
+            return { ...newState }
+        },
+        setModelFilter: (state, action) => {
+            let newState = { ...state }
+            newState.models = newState.models.map(model => ({ ...model, isSelectedFilter: model.value === action.payload }))
+            return { ...newState }
+        },
+        setLengthFilter: (state, action) => {
+            console.log(state)
+            let newState = { ...state }
+            newState.lengths = newState.lengths.map(length => ({ ...length, isSelectedFilter: length.value === action.payload }))
             return { ...newState }
         },
         setLanguage: (state, action) => {
@@ -80,7 +121,9 @@ export const {
     setLength,
     setLanguage,
     setResult,
-    setGeneratingDescription
+    setGeneratingDescription,
+    setModelFilter,
+    setLengthFilter
 } = FormSlice.actions
 
 export default FormSlice.reducer
