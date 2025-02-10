@@ -37,7 +37,14 @@ const ProductsSlice = createSlice({
 
             }
         },
+        updateProduct: (state, action) => {
+            // adds product descriptions
+            console.log('updateProductDescriptions', action.payload)  
+            let prodIndex = [...state.products].findIndex(p =>  p.imageUrl === action.payload.imageUrl)
+            state.products[prodIndex] = {...action.payload}
+        },
         updateProductDescriptions: (state, action) => {
+            // adds product descriptions
             console.log('updateProductDescriptions', action.payload)
             const {
                 languages,
@@ -85,6 +92,7 @@ export const {
     setQuery,
     updateProductPrice,
     setOpenedProductDetails,
+    updateProduct,
     updateProductDescriptions,
     deleteProductDescriptions
 } = ProductsSlice.actions

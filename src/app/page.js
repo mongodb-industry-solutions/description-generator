@@ -9,7 +9,7 @@ import styles from './page.module.css'
 import ImageUpload from "@/components/imageUpload/ImageUpload";
 import DescriptionInput from "@/components/descriptionInput/DescriptionInput";
 import { fetchDescriptions, fetchProducts, updateDescriptionsToMongoDB } from '@/lib/api';
-import { setInitialLoad, setProducts, updateProductDescriptions } from '@/redux/slices/ProductsSlice';
+import { setInitialLoad, setProducts, updateProduct } from '@/redux/slices/ProductsSlice';
 import TextInput from '@leafygreen-ui/text-input';
 import { getProductImageFromObjectId } from '@/lib/helpers';
 import { setLanguage, setLength, setModel, setImage, setResult, setGeneratingDescription } from '@/redux/slices/FormSlice';
@@ -58,14 +58,13 @@ export default function Home() {
     dispatch(setGeneratingDescription(true));
     const response = await fetchDescriptions(body)
     if (response) {
-      console.log(response)
       dispatch(setResult(response))
       dispatch(setGeneratingDescription(false));
       const updateMDBRes = new Date()
       addOperationAlert({id: updateMDBRes.getMilliseconds(), title: 'Update One operation', message: 'Saving descriptions of product in MongoDB'})
-      const updateMDB = await updateDescriptionsToMongoDB(response)
-      if (updateMDB.modifiedCount === 1) {
-        dispatch(updateProductDescriptions({ ...body, descriptions: response.descriptions }))
+      const updatedProductDocument = await updateDescriptionsToMongoDB(response)
+      if (updatedProductDocument) {
+        dispatch(updateProduct(updatedProductDocument))
         addSucAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Description of product stored in MongoDB`})
       }else{
         addWarnAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Error storing description of product in MongoDB`})
@@ -118,7 +117,7 @@ export default function Home() {
   return (
     <div className=''>
       <h2 className="mt-3 mb-3 text-center text-2xl font-bold">Descriptor Generator</h2>
-      <div className="container">
+      <div className="container" onClick={() => console.log(result)}>
         <div className="row ">
           <div className={`${styles.leftSide} col-12 col-md-6 p-3 mb-3 text-center`}>
             <p className='text-secondary'>Upload an image to generate descriptions in multiple languages.</p>
@@ -199,8 +198,12 @@ export default function Home() {
                       result?.descriptions.map((description, index) => (
                         <DescriptionOutput 
                           key={index}
-                          language={languagesOptions.find(l => l.value === description.language).label}
+                          language={description.language}
+                          languageLabel={languagesOptions.find(l => l.value === description.language)?.label}
                           description={description.description}
+                          imageUrl={result.imageUrl}
+                          length={result.length}
+                          model={result.model}
                         />
                       ))
                     }

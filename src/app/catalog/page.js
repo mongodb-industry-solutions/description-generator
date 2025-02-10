@@ -187,7 +187,6 @@ export default function Page() {
                                                 <IconButton
                                                     aria-label="Some Menu"
                                                     title='Delete descriptions'
-                                                    className=''
                                                     onClick={() => onDeleteDescriptions(product)}
                                                 >
                                                     <TrashIcon />
