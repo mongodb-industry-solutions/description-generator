@@ -15,6 +15,7 @@
     "@leafygreen-ui/leafygreen-provider": "^4.0.2",
     "@leafygreen-ui/loading-indicator": "^2.0.12",
     "@leafygreen-ui/table": "^12.7.0",
+    "@leafygreen-ui/text-area": "^10.0.4",
     "@leafygreen-ui/text-input": "^13.1.2",
     "@leafygreen-ui/toast": "^7.0.2",
     "@reduxjs/toolkit": "^2.5.0",

@@ -2,20 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const MODELS = [
     {
-      value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-      label: "Llama 3.2 11B",
-      isSelected: true,
-      isSelectedFilter: true
+        value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
+        label: "Llama 3.2 11B",
+        isSelected: true,
+        isSelectedFilter: true
 
     },
     {
-      value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-      label: "Llama 3.2 90B",
-      isSelected: false,
-      isSelectedFilter: false
+        value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
+        label: "Llama 3.2 90B",
+        isSelected: false,
+        isSelectedFilter: false
     },
-  ];
-  export const LANGUAGES = [
+];
+export const LANGUAGES = [
     { value: "en", label: "English", isSelected: true },
     { value: "es", label: "Spanish", isSelected: false },
     { value: "fr", label: "French", isSelected: false },
@@ -25,13 +25,13 @@ export const MODELS = [
     { value: "ko", label: "Korean", isSelected: false },
     { value: "zh", label: "Chinese", isSelected: false },
     { value: "pt", label: "Portuguese", isSelected: false },
-  ];
-  export const LENGTHS = [
+];
+export const LENGTHS = [
     { value: "short", label: "Short", isSelected: true, isSelectedFilter: true },
     { value: "medium", label: "Medium", isSelected: false, isSelectedFilter: false },
     { value: "long", label: "Long", isSelected: false, isSelectedFilter: false },
-  ];
-  
+];
+
 const FormSlice = createSlice({
     name: "Form",
     initialState: {
@@ -44,7 +44,7 @@ const FormSlice = createSlice({
         lengths: LENGTHS,
         selectedLanguages: [LANGUAGES[0]?.value],
         languages: LANGUAGES,
-        result: null, // null or [] ,
+        result: null, // null or {} , This is what we show in the UI of the form page, where we have the results for a specific product after sending the form
         generatingDescription: false
     },
     reducers: {
@@ -95,17 +95,37 @@ const FormSlice = createSlice({
                 // add language to selection
                 newState.selectedLanguages = [...newState.selectedLanguages, action.payload]
                 newState.languages = newState.languages.map(option => {
-                        return option.value === action.payload
-                            ? { ...option, isSelected: true }
-                            : { ...option }
-                    }
-                    )
+                    return option.value === action.payload
+                        ? { ...option, isSelected: true }
+                        : { ...option }
+                }
+                )
             }
             console.log(newState)
-            return {...newState}
+            return { ...newState }
         },
         setResult: (state, action) => {
-            return { ...state, result: {...action.payload} }
+            return {
+                ...state,
+                result: {
+                    ...action.payload,
+                    descriptions: [...action.payload.descriptions],
+                    model: action.payload.model,
+                    length: action.payload.length,
+                    imageUrl: action.payload.imageUrl
+                }
+            }
+        },
+        updateResult: (state, action) => {
+            // called when we update one description from the form UI
+            const languageToUpdate = action.payload.language
+            const newDescription = action.payload.description
+            for (let i = 0; i < state.result.descriptions?.length; i++) {
+                if ( state.result.descriptions[i].language === languageToUpdate) {
+                    state.result.descriptions[i].description = newDescription;
+                    break; // Exit the loop once the object is found and updated
+                }
+            }
         },
         setGeneratingDescription: (state, action) => {
             return { ...state, generatingDescription: action.payload }
@@ -121,6 +141,7 @@ export const {
     setLength,
     setLanguage,
     setResult,
+    updateResult,
     setGeneratingDescription,
     setModelFilter,
     setLengthFilter

@@ -43,6 +43,7 @@ export async function deleteDescriptions(props) {
 }
 
 export async function updateDescriptionsToMongoDB(props) {
+  console.log('updateDescriptionsToMongoDB', props)
   let {descriptions, length, model, imageUrl} = props
   const response = await fetch("/api/updateDescriptions", {
     method: "POST",
@@ -56,8 +57,7 @@ export async function updateDescriptionsToMongoDB(props) {
   if (!response.ok) {
     throw new Error(`Error fetching cart: ${response.status}`);
   }
-  const data = await response.json();
-  console.log('data', data)
-  
-  return data;
+  const productDocument = await response.json();
+  console.log('data updateDescriptionsToMongoDB', productDocument)
+  return productDocument;
 }
