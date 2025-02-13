@@ -23,7 +23,7 @@ export async function POST(request) {
         $set: setDescriptionsPipeline
     }
 
-    const result = await collection.findOneAndUpdate(filter, pipeline, {returnDocument: 'after'})
+    const result = await collection.findOneAndUpdate(filter, pipeline, {returnDocument: 'after', upsert: true})
     console.log(`Modified ${result.modifiedCount} document(s).`);
     console.log(result)
     return NextResponse.json(result);

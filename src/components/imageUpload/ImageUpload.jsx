@@ -1,4 +1,5 @@
-import React, {useRef} from 'react'
+import React, {useRef, useEffect, useState} from 'react'
+import { useSelector, useDispatch } from 'react-redux';
 import Image from 'next/image';
 import IconButton from '@leafygreen-ui/icon-button';
 import XIcon from '@leafygreen-ui/icon/dist/X';
@@ -6,17 +7,29 @@ import UploadIcon from '@leafygreen-ui/icon/dist/Upload';
 import FileIcon from '@leafygreen-ui/icon/dist/File';
 
 import styles from "./imageUpload.module.css";
+import { setImage } from '@/redux/slices/FormSlice';
 
 const ImageUpload = (props) => {
-  let { image, setImage, uploadToS3 } = props;
+  const dispatch = useDispatch();
+  let { uploadToS3 } = props;
   const imageInputRef = useRef(null)
+  const image = useSelector(state => state.Form.image)
+  const [loading, setLoading] = useState(false)
 
   const handleImageUpload = async (event) => {
+    setLoading(true)
     const file = event.target.files?.[0];
     if (!file) return;
     const { url } = await uploadToS3(file);
-    setImage(url);
+    //console.log(url)
+    dispatch(setImage(url))
+    setLoading(false)
   };
+
+  useEffect(() => {
+    console.log(image)
+  }, [image])
+  
 
   return (
     <div className={styles.imageUpload}>
@@ -36,14 +49,18 @@ const ImageUpload = (props) => {
               alt='Product'
             ></Image>
           </div>
+          : loading
+          ?  <div className={`${styles.imageUploadChildContainer} d-flex flex-column align-items-center justify-content-center`}>
+            <strong className='text-secondary'>Loading...</strong>
+          </div>
           : <div 
-            //onClick={() => imageInputRef.current.click()} 
+            onClick={() => imageInputRef.current.click()} 
             className={`${styles.imageUploadChildContainer} ${styles.cursorPointe} d-flex flex-column align-items-center justify-content-center`}
           >
-            <UploadIcon size="xlarge" className='d-none' />
-            <FileIcon size="xlarge" className='' />
-            <p className='mt-2 d-none'>Upload product image</p>
-            <p className='mt-2'>Product image</p>
+            <UploadIcon size="xlarge" className='' />
+            <FileIcon size="xlarge" className='d-none' />
+            <p className='mt-2'>Upload product image</p>
+            <p className='mt-2 d-none'>Product image</p>
             <input
               ref={imageInputRef}
               id="image-upload"

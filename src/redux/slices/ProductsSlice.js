@@ -41,7 +41,11 @@ const ProductsSlice = createSlice({
             // adds product descriptions
             console.log('updateProductDescriptions', action.payload)  
             let prodIndex = [...state.products].findIndex(p =>  p.imageUrl === action.payload.imageUrl)
-            state.products[prodIndex] = {...action.payload}
+            console.log(prodIndex)
+            if(prodIndex === -1)
+                state.products.push({...action.payload})
+            else
+                state.products[prodIndex] = {...action.payload}
         },
         updateProductDescriptions: (state, action) => {
             // adds product descriptions

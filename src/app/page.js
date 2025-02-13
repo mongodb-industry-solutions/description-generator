@@ -34,6 +34,7 @@ export default function Home() {
   const productIdRef = useRef(null)
 
   const [sampleImageLoading, setSampleImageLoading] = useState(false)
+  const [disableUpload, setDisableUpload] = useState(true)
   const { uploadToS3 } = useS3Upload();
 
   const onModelChange = (selectedOption) => {
@@ -113,7 +114,6 @@ export default function Home() {
     getAllCatalogProducts();
   }, [])
 
-
   return (
     <div className=''>
       <h2 className="mt-3 mb-3 text-center text-2xl font-bold">Descriptor Generator</h2>
@@ -125,13 +125,17 @@ export default function Home() {
               <TextInput
                 label="Use product from catalog"
                 placeholder="Enter ObjectId"
-                onChange={event => { console.log(event) }}
+                onChange={event => { 
+                  console.log(event)
+                  setDisableUpload(productIdRef == null || productIdRef?.current?.value == null || productIdRef?.current?.value == '' || productIdRef?.current?.value.length <= 0) 
+                }}
                 ref={productIdRef}
               />
               <Button
                 className={`${styles.submitBtn} ms-2`}
                 style={{height: '36px'}}
                 onClick={() => onLoadImageFromObjectId()}
+                disabled={disableUpload}
               >
                 Upload
               </Button>
