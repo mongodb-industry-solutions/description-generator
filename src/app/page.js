@@ -26,6 +26,7 @@ export default function Home() {
   const lengthOptions = useSelector(state => state.Form.lengths)
   const selectedLanguages = useSelector(state => state.Form.selectedLanguages)
   const languagesOptions = useSelector(state => state.Form.languages)
+  const languagesDisabled = useSelector(state => state.Form.disabledLanguages)
   const result = useSelector(state => state.Form.result)
   const generatingDescription = useSelector(state => state.Form.generatingDescription)
 
@@ -159,6 +160,7 @@ export default function Home() {
               options={languagesOptions}
               onSelectionChange={onLanguageChange}
               disableUnselectedOptions={selectedLanguages.length >= 3}
+              disabledLanguages = {languagesDisabled}
             />
             <hr />
             <DescriptionInput
