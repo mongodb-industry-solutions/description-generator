@@ -61,3 +61,23 @@ export async function updateDescriptionsToMongoDB(props) {
   console.log('data updateDescriptionsToMongoDB', productDocument)
   return productDocument;
 }
+
+export async function deleteProductFromMDB(props) {
+  let {_id, imageUrl} = props
+
+  if(imageUrl.includes('https://m.media-amazon.com/images'))
+    console.log('Remove image from s3 bucket')
+
+  const response = await fetch("/api/deleteProduct", {
+    method: "POST",
+    body: JSON.stringify({
+      _id,
+      imageUrl
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`Error fetching cart: ${response.status}`);
+  }
+  const descriptions = await response.json();
+  return descriptions;
+}

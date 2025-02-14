@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react'
+import React, {useRef, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import Image from 'next/image';
 import IconButton from '@leafygreen-ui/icon-button';
@@ -25,11 +25,6 @@ const ImageUpload = (props) => {
     dispatch(setImage(url))
     setLoading(false)
   };
-
-  useEffect(() => {
-    console.log(image)
-  }, [image])
-  
 
   return (
     <div className={styles.imageUpload}>

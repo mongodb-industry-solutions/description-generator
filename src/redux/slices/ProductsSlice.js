@@ -74,6 +74,17 @@ const ProductsSlice = createSlice({
                 )
             state.products[prodIndex].descriptions = {}
         },
+        deleteProduct: (state, action) => {
+            console.log('deleteProductDescriptions', action.payload)
+            const {  _id, imageUrl } = action.payload        
+            let prodIndex = [...state.products]
+                .findIndex(p =>  
+                    p.imageUrl === imageUrl && p._id === _id
+                )
+            state.products = state.products.filter(p =>  
+                p.imageUrl !== imageUrl && p._id !== _id
+            )
+        },
         setOpenedProductDetails: (state, action) => {
             let newOpenedProductDetails = action.payload == null ? null : {...action.payload}
             console.log('newOpenedProductDetails, ', newOpenedProductDetails)
@@ -98,7 +109,8 @@ export const {
     setOpenedProductDetails,
     updateProduct,
     updateProductDescriptions,
-    deleteProductDescriptions
+    deleteProductDescriptions,
+    deleteProduct
 } = ProductsSlice.actions
 
 export default ProductsSlice.reducer
