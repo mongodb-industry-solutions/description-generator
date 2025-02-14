@@ -16,15 +16,15 @@ export const MODELS = [
     },
 ];
 export const LANGUAGES = [
-    { value: "en", label: "English", isSelected: true },
+    { value: "en", label: "English", isSelected: true},
     { value: "es", label: "Spanish", isSelected: false },
     { value: "fr", label: "French", isSelected: false },
     { value: "de", label: "German", isSelected: false },
     { value: "it", label: "Italian", isSelected: false },
     { value: "ja", label: "Japanese", isSelected: false },
     { value: "ko", label: "Korean", isSelected: false },
-    { value: "zh", label: "Chinese", isSelected: false },
-    { value: "pt", label: "Portuguese", isSelected: false },
+    { value: "zh", label: "Chinese", isSelected: false},
+    { value: "pt", label: "Portuguese", isSelected: false},
 ];
 export const LENGTHS = [
     { value: "short", label: "Short", isSelected: true, isSelectedFilter: true },
@@ -44,6 +44,7 @@ const FormSlice = createSlice({
         lengths: LENGTHS,
         selectedLanguages: [LANGUAGES[0]?.value],
         languages: LANGUAGES,
+        disabledLanguages: ['it', 'ja', 'ko', 'zh'],
         result: null, // null or {} , This is what we show in the UI of the form page, where we have the results for a specific product after sending the form
         generatingDescription: false
     },
