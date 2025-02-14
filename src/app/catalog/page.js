@@ -1,13 +1,11 @@
 "use client"
 
 import { deleteDescriptions, deleteProductFromMDB, fetchProducts } from '@/lib/api';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-    Cell,
     HeaderCell,
     HeaderRow,
-    Row,
     Table,
     TableBody,
     TableHead,
@@ -15,11 +13,9 @@ import {
 import Spinner from 'react-bootstrap/Spinner';
 
 //import Code from '@leafygreen-ui/code';
-import CurlyBracesIcon from '@leafygreen-ui/icon/dist/CurlyBraces';
-import TrashIcon from '@leafygreen-ui/icon/dist/Trash';
-import IconButton from '@leafygreen-ui/icon-button';
+
 import Image from 'next/image';
-import { Container, Toast } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import Button from "@leafygreen-ui/button";
 
 import './catalog.css'
@@ -27,8 +23,9 @@ import { deleteProduct, deleteProductDescriptions, setInitialLoad, setOpenedProd
 import ModalContainer from '@/components/modalContainer/ModalContainer';
 import JsonDisplay from '@/components/jsonDisplayComp/JsonDisplayComp';
 import DescriptionInput from '@/components/descriptionInput/DescriptionInput';
-import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlert, closeAlertWithDelay } from '@/lib/alerts';
+import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlertWithDelay } from '@/lib/alerts';
 import { setLengthFilter, setModelFilter } from '@/redux/slices/FormSlice';
+import ProductRow from '@/components/productRow/productRow';
 
 export default function Page() {
     const dispatch = useDispatch();
@@ -38,8 +35,6 @@ export default function Page() {
     const lengthOptions = useSelector(state => state.Form.lengths)
     const openedProductDetails = useSelector(state => state.Products.openedProductDetails)
     const initialLoad = useSelector(state => state.Products.initialLoad)
-    const selectedModel = useSelector(state => state.Form.models?.find(model => model.isSelectedFilter === true).value)
-    const selectedLength = useSelector(state => state.Form.lengths?.find(length => length.isSelectedFilter === true).value)
     const [disableActionsInModal, setDisableActionsInModal] = useState(false)
 
     const onDeleteDescriptions = (product) => {
@@ -181,8 +176,8 @@ export default function Page() {
                                 <HeaderRow>
                                     <HeaderCell>ID</HeaderCell>
                                     <HeaderCell style={{ minWidth: '100px' }}>Product</HeaderCell>
-                                    <HeaderCell style={{ minWidth: 'auto' }}>Spanish</HeaderCell>
                                     <HeaderCell style={{ minWidth: 'auto' }}>English</HeaderCell>
+                                    <HeaderCell style={{ minWidth: 'auto' }}>Spanish</HeaderCell>
                                     <HeaderCell style={{ minWidth: 'auto' }}>French</HeaderCell>
                                     <HeaderCell style={{ minWidth: '89px' }}>Actions</HeaderCell>
                                 </HeaderRow>
@@ -190,52 +185,12 @@ export default function Page() {
                             <TableBody>
                                 {
                                     catalog.map((product, index) => (
-                                        <Row key={index}>
-                                            <Cell>{product._id}</Cell>
-                                            <Cell>
-                                                <div className='cursorPointer' onClick={() => onSeeFullDocument(product)}>
-                                                    <Image
-
-                                                        src={product.imageUrl}
-                                                        width={100}
-                                                        height={100}
-                                                        style={{ objectFit: "contain", padding: '4px' }}
-                                                        alt='Product'
-                                                    ></Image>
-                                                </div>
-                                            </Cell>
-                                            <Cell>
-                                                {
-                                                    product.descriptions?.es?.[`${selectedLength}_${selectedModel.replaceAll('.', '')}`] || 'n/a'
-                                                }
-                                            </Cell>
-                                            <Cell>
-                                                {
-                                                    product.descriptions?.en?.[`${selectedLength}_${selectedModel.replaceAll('.', '')}`] || 'n/a'
-                                                }
-                                            </Cell>
-                                            <Cell>
-                                                {
-                                                    product.descriptions?.fr?.[`${selectedLength}_${selectedModel.replaceAll('.', '')}`] || 'n/a'
-                                                }
-                                            </Cell>
-                                            <Cell>
-                                                <IconButton
-                                                    onClick={() => onSeeFullDocument(product)}
-                                                    aria-label="Some Menu"
-                                                    title='See full document'
-                                                >
-                                                    <CurlyBracesIcon />
-                                                </IconButton>
-                                                <IconButton
-                                                    aria-label="Some Menu"
-                                                    title='Delete descriptions'
-                                                    onClick={() => onDeleteDescriptions(product)}
-                                                >
-                                                    <TrashIcon />
-                                                </IconButton>
-                                            </Cell>
-                                        </Row>
+                                        <ProductRow
+                                            key={index}
+                                            product={product}
+                                            onSeeFullDocument={onSeeFullDocument}
+                                            onDeleteDescriptions={onDeleteDescriptions}
+                                        ></ProductRow>
                                     ))
                                 }
                             </TableBody>
@@ -249,13 +204,16 @@ export default function Page() {
                 children={(open && openedProductDetails !== null)
                     ? <div className=' d-flex flex-column align-items-center justify-content-center'>
                         <h3>Product's document model</h3>
-                        <Image
-                            src={openedProductDetails?.imageUrl}
-                            width={120}
-                            height={120}
-                            style={{ objectFit: "contain", padding: '4px' }}
-                            alt='Product'
-                        ></Image>
+                        {
+                            openedProductDetails &&
+                            <Image
+                                src={openedProductDetails?.imageUrl}
+                                width={120}
+                                height={120}
+                                style={{ objectFit: "contain", padding: '4px' }}
+                                alt='Product'
+                            ></Image>
+                        }
                         <div>
                             {
                                 !openedProductDetails?.imageUrl.includes('https://m.media-amazon.com/images') &&

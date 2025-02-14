@@ -142,11 +142,9 @@ export default function Home() {
               </Button>
             </div>
             <ImageUpload image={image} setImage={setImage} uploadToS3={uploadToS3} />
-
             <div className={`d-flex flex-row-reverse mb-3`}>
               <small onClick={() => onLoadSampleImage()}  className={`${styles.cursorPointer} ${styles.sampleText} mt-1`}>Use sample image from catalog</small>
             </div>
-
             <DescriptionInput
               title="Model"
               description="Select the Llama 3.2 vision model you want to use."
