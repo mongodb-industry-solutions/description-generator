@@ -153,13 +153,16 @@ export default function Page() {
                                         <Row key={index}>
                                             <Cell>{product._id}</Cell>
                                             <Cell>
-                                                <Image
-                                                    src={product.imageUrl}
-                                                    width={100}
-                                                    height={100}
-                                                    style={{ objectFit: "contain", padding: '4px' }}
-                                                    alt='Product'
-                                                ></Image>
+                                                <div className='cursorPointer' onClick={() => onSeeFullDocument(product)}>
+                                                    <Image
+                                                        
+                                                        src={product.imageUrl}
+                                                        width={100}
+                                                        height={100}
+                                                        style={{ objectFit: "contain", padding: '4px' }}
+                                                        alt='Product'
+                                                    ></Image>
+                                                </div>
                                             </Cell>
                                             <Cell>
                                                 {
