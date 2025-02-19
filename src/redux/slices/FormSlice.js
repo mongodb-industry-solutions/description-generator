@@ -2,11 +2,28 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const MODELS = [
     {
-        value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-        label: "Llama 3.2 11B",
+        value: "google/gemma-2-27b-it",
+        label: "Gemma-2 Instruct (27B)",
         isSelected: true,
         isSelectedFilter: true
-
+    },
+    {
+        value: "google/gemma-2b-it",
+        label: "Gemma Instruct (2B)",
+        isSelected: false,
+        isSelectedFilter: false
+    },
+    {
+        value: "google/gemma-2-9b-it",
+        label: "Gemma-2 Instruct (9B)",
+        isSelected: false,
+        isSelectedFilter: false
+    },
+    {
+        value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
+        label: "Llama 3.2 11B",
+        isSelected: false,
+        isSelectedFilter: false
     },
     {
         value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
@@ -21,10 +38,10 @@ export const LANGUAGES = [
     { value: "fr", label: "French", isSelected: false },
     { value: "de", label: "German", isSelected: false },
     { value: "it", label: "Italian", isSelected: false },
+    { value: "pt", label: "Portuguese", isSelected: false},
     { value: "ja", label: "Japanese", isSelected: false },
     { value: "ko", label: "Korean", isSelected: false },
     { value: "zh", label: "Chinese", isSelected: false},
-    { value: "pt", label: "Portuguese", isSelected: false},
 ];
 export const LENGTHS = [
     { value: "short", label: "Short", isSelected: true, isSelectedFilter: true },
