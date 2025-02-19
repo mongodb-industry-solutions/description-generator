@@ -35,7 +35,7 @@ const DescriptionInput = (props) => {
                                 key={index}
                                 onClick={() => onSelectionChange(option)}
                                 className={` me-1 mb-1 ${styles.optionBtn} ${option[selectedFieldName] === true ? styles.selected : ''}`}
-                                disabled= {disabledLanguages.includes(option.value) || (disableUnselectedOptions && !option[selectedFieldName])}
+                                disabled= {disabledLanguages.includes(option.value) || (disableUnselectedOptions && !option[selectedFieldName]) || option.isDisabled === true }
                             >
                                 {option.label}
                             </Button>
