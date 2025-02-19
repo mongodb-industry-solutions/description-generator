@@ -33,7 +33,7 @@ export async function POST(req) {
         {
           role: "system",
           content: `
-          You are a helpful product description generator that ONLY responses with JSON.
+          You are a helpful product description generator that ONLY respondes with JSON.
           `,
         },
         {
@@ -41,9 +41,11 @@ export async function POST(req) {
           content: [
             {
               type: "text",
-              text: `Given this product image, return JSON of an Amazon-like ${length} sales product description in each of these languages. ${languages
+              text: `Given this product image, return JSON of an Amazon-like sales product description in each of these languages. ${languages
                 .map((language) => `"${language}"`)
                 .join(", ")}
+
+              The desription of the product must be maximum ${length === 'short' ? '30' : length === 'medium' ? '50' : '85'} words
 
               Return a JSON object in the following shape: [{language: string, description: string},...]
 

@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react'
+import React, {useRef, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import Image from 'next/image';
 import IconButton from '@leafygreen-ui/icon-button';
@@ -21,15 +21,10 @@ const ImageUpload = (props) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const { url } = await uploadToS3(file);
-    //console.log(url)
+    console.log('uploadToS3', url)
     dispatch(setImage(url))
     setLoading(false)
   };
-
-  useEffect(() => {
-    console.log(image)
-  }, [image])
-  
 
   return (
     <div className={styles.imageUpload}>
@@ -55,7 +50,7 @@ const ImageUpload = (props) => {
           </div>
           : <div 
             onClick={() => imageInputRef.current.click()} 
-            className={`${styles.imageUploadChildContainer} ${styles.cursorPointe} d-flex flex-column align-items-center justify-content-center`}
+            className={`${styles.imageUploadChildContainer} ${styles.cursorPointer} d-flex flex-column align-items-center justify-content-center`}
           >
             <UploadIcon size="xlarge" className='' />
             <FileIcon size="xlarge" className='d-none' />
