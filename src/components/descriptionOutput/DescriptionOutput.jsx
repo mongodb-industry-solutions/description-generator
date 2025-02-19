@@ -20,6 +20,7 @@ const DescriptionOutput = (props) => {
         imageUrl,
         length,
         model,
+        isInCatalogRow=false
     } = props;
     const dispatch = useDispatch();
     const [isEditing, setIsEditing] = useState(false)
@@ -54,7 +55,8 @@ const DescriptionOutput = (props) => {
             dispatch(updateProduct(updatedProductDocument))
             addSucAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Description of product stored in MongoDB` })
             setIsEditing(false)
-            dispatch(updateResult({...productData.descriptions[0]})) 
+            if(!isInCatalogRow)
+                dispatch(updateResult({...productData.descriptions[0]})) 
         } else {
             addWarnAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Error storing description of product in MongoDB` })
         }

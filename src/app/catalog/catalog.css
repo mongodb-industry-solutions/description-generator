@@ -23,3 +23,9 @@
     width: 100%;
     text-align: center;
 }
+.cursorPointer{
+    cursor: pointer;
+}
+.removeHover:hover, .removeHover:focus-visible, .removeHover:focus{
+    background-color: transparent !important;
+}
