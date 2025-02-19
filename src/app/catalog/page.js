@@ -25,7 +25,7 @@ import JsonDisplay from '@/components/jsonDisplayComp/JsonDisplayComp';
 import DescriptionInput from '@/components/descriptionInput/DescriptionInput';
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlertWithDelay } from '@/lib/alerts';
 import { setLengthFilter, setModelFilter } from '@/redux/slices/FormSlice';
-import ProductRow from '@/components/productRow/productRow';
+import ProductRow from '@/components/productRow/ProductRow';
 
 export default function Page() {
     const dispatch = useDispatch();
