@@ -59,7 +59,7 @@ export default function Home() {
       return;
     dispatch(setGeneratingDescription(true));
     const response = await fetchDescriptions(body)
-    if (response) {
+    if (response && response?.descriptions?.length > 0) {
       dispatch(setResult(response))
       dispatch(setGeneratingDescription(false));
       const updateMDBRes = new Date()
@@ -72,6 +72,8 @@ export default function Home() {
         addWarnAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Error storing description of product in MongoDB`})
       }
       closeAlertWithDelay(updateMDBRes.getMilliseconds(), 1500)
+    }else{
+      addWarnAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'An error ocured generating the descriptions'})
     }
     dispatch(setGeneratingDescription(false));
   }
