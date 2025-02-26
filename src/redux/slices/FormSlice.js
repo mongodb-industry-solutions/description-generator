@@ -1,27 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const MODELS = [
-    {
-        value: "google/gemma-2-27b-it",
-        label: "Gemma-2 Instruct (27B)",
-        isSelected: false,
-        isSelectedFilter: false,
-        isDisabled: true
-    },
-    {
-        value: "google/gemma-2b-it",
-        label: "Gemma Instruct (2B)",
-        isSelected: false,
-        isSelectedFilter: false,
-        isDisabled: true
-    },
-    {
-        value: "google/gemma-2-9b-it",
-        label: "Gemma-2 Instruct (9B)",
-        isSelected: false,
-        isSelectedFilter: false,
-        isDisabled: true
-    },
+    // {
+    //     value: "google/gemma-2-27b-it",
+    //     label: "Gemma-2 Instruct (27B)",
+    //     isSelected: false,
+    //     isSelectedFilter: false,
+    //     isDisabled: true
+    // },
+    // {
+    //     value: "google/gemma-2b-it",
+    //     label: "Gemma Instruct (2B)",
+    //     isSelected: false,
+    //     isSelectedFilter: false,
+    //     isDisabled: true
+    // },
+    // {
+    //     value: "google/gemma-2-9b-it",
+    //     label: "Gemma-2 Instruct (9B)",
+    //     isSelected: false,
+    //     isSelectedFilter: false,
+    //     isDisabled: true
+    // },
     {
         value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
         label: "Llama 3.2 11B",
