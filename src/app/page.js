@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from 'react-redux';
-import { Button as BSButton } from 'react-bootstrap';
+import { Button as BSButton, Container } from 'react-bootstrap';
 import Button from "@leafygreen-ui/button";
 import Icon from '@leafygreen-ui/icon';
+import { H1 } from '@leafygreen-ui/typography';
 
 
 import { useS3Upload } from "next-s3-upload";
@@ -21,6 +22,8 @@ import { setLanguage, setLength, setModel, setImage, setResult, setGeneratingDes
 import DescriptionOutput from '@/components/descriptionOutput/DescriptionOutput';
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlert, closeAlertWithDelay } from '@/lib/alerts';
 import Image from 'next/image';
+import TalkTrackContainer from '@/components/talkTrackContainer/talkTrackContainer';
+import { formPage } from '@/lib/talkTrack';
 
 
 export default function Home() {
@@ -126,8 +129,13 @@ export default function Home() {
   }, [])
 
   return (
-    <div className=''>
-      <h2 className="mt-3 mb-3 text-center text-2xl font-bold">Description Generator</h2>
+    <Container className=''>
+      <div className='d-flex flex-row align-items-center mb-2'>
+        <div className='d-flex align-items-end w-100'>
+          <H1 className=''>Description Generator</H1>
+        </div>
+        <TalkTrackContainer sections={formPage} />
+      </div>
       <div className="container" onClick={() => console.log(result)}>
         <div className="row ">
           <div className={`${styles.leftSide} col-12 col-md-6 p-3 mb-3 text-center`}>
@@ -247,6 +255,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

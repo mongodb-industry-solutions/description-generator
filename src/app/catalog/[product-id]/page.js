@@ -9,7 +9,7 @@ import Button from '@leafygreen-ui/button'
 import Image from 'next/image'
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlertWithDelay } from "@/lib/alerts";
 import { deleteProductFromMDB, fetchProducts } from "@/lib/api";
-import { setInitialLoad, setOpenedProductDetails, setProducts } from "@/redux/slices/ProductsSlice";
+import { deleteProduct, setInitialLoad, setOpenedProductDetails, setProducts } from "@/redux/slices/ProductsSlice";
 import { Spinner } from 'react-bootstrap';
 import { getProductFromObjectId } from '@/lib/helpers';
 
@@ -37,7 +37,7 @@ const ProductPage = () => {
         })
         try {
             const response = await deleteProductFromMDB({ _id: openedProductDetails._id, imageUrl: openedProductDetails.imageUrl });
-            setOpen(false)
+            router.push(`/catalog`);
             dispatch(setOpenedProductDetails(null))
             if (response.modifiedCount > 0 || response.acknowledged == true) {
                 dispatch(deleteProduct({ _id: response._id, imageUrl: response.imageUrl }))
