@@ -126,6 +126,12 @@ const FormSlice = createSlice({
             return { ...newState }
         },
         setResult: (state, action) => {
+            console.log(action.payload)
+            if(action.payload === null)
+                return {
+                    ...state,
+                    result: null
+                }
             return {
                 ...state,
                 result: {

@@ -20,6 +20,7 @@ const ProductRow = (props) => {
             <Cell>
                 <div className='cursorPointer'>
                     <Image
+                        onClick={() => onSeeFullDocument(product)}
                         src={product?.imageUrl}
                         width={100}
                         height={100}
