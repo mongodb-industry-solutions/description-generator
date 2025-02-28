@@ -51,3 +51,8 @@
     max-height: 800px;
     overflow: auto;
 }
+.anchorStyle{
+    color:blue;
+    cursor: pointer;
+    font-size: medium;
+}
