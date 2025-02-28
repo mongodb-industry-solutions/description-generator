@@ -16,10 +16,11 @@ import DescriptionInput from "@/components/descriptionInput/DescriptionInput";
 import { fetchDescriptions, fetchProducts, updateDescriptionsToMongoDB } from '@/lib/api';
 import { setInitialLoad, setOpenedProductDetails, setProducts, updateProduct } from '@/redux/slices/ProductsSlice';
 import TextInput from '@leafygreen-ui/text-input';
-import { getProductFromObjectId, getProductImageFromObjectId } from '@/lib/helpers';
+import { getProductFromObjectId, setProductImageInFormFromObjectId } from '@/lib/helpers';
 import { setLanguage, setLength, setModel, setImage, setResult, setGeneratingDescription } from '@/redux/slices/FormSlice';
 import DescriptionOutput from '@/components/descriptionOutput/DescriptionOutput';
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlert, closeAlertWithDelay } from '@/lib/alerts';
+import Image from 'next/image';
 
 
 export default function Home() {
@@ -86,9 +87,8 @@ export default function Home() {
     dispatch(setGeneratingDescription(false));
   }
   const onLoadImageFromObjectId = () => {
-    const imageId = getProductImageFromObjectId(productIdRef.current.value)
+    const imageId = setProductImageInFormFromObjectId(productIdRef.current.value)
     console.log(imageId)
-    dispatch(setImage(imageId))
   }
   const onLoadSampleImage = () => {
     // TODO. replace this hard coded URL with an API call that:
@@ -208,6 +208,15 @@ export default function Home() {
                   </div>
                   : <div className=''>
                     <h4>Generated descriptions</h4>
+                    {
+                      result.imageUrl && <Image
+                        src={result?.imageUrl}
+                        width={100}
+                        height={100}
+                        style={{ objectFit: "contain", padding: '4px' }}
+                        alt='Product'
+                      ></Image>
+                    }
                     {
                       result?.descriptions.map((description, index) => (
                         <DescriptionOutput

@@ -1,3 +1,4 @@
+import { setImage } from "@/redux/slices/FormSlice";
 import store from "@/redux/store";
 
 export const MODELS = store.getState().Form.models
@@ -8,7 +9,9 @@ export const getProductFromObjectId = (_id) => {
   const product = [...store.getState().Products.products].find(p => p._id === _id);
   return product || null
 }
-export const getProductImageFromObjectId = (_id) => {
+export const setProductImageInFormFromObjectId = (_id) => {
   const product = [...store.getState().Products.products].find(p => p._id === _id);
-  return product?.imageUrl || null
+  const imageUrl = product?.imageUrl || null
+  store.dispatch(setImage(imageUrl));
+  return imageUrl
 }

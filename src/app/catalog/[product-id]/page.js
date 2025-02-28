@@ -20,10 +20,10 @@ const ProductPage = () => {
 
     const router = useRouter();
     const params = useParams();
-    const [productId, setProductId] = useState(null);
 
     const openedProductDetails = useSelector(state => state.Products.openedProductDetails)
     const [disableActionsInModal, setDisableActionsInModal] = useState(false)
+    const [open, setOpen] = useState(false)
 
     const deleteOpenedProductDetails = async () => {
         if (!openedProductDetails)
@@ -98,15 +98,13 @@ const ProductPage = () => {
     }
 
     useEffect(() => {
+        setOpen(true)
         if (params) {
-            setProductId(params["product-id"]);
             if (openedProductDetails === null) {
-                console.log('TODO. get prod')
                 const product = getProductFromObjectId(params["product-id"])
                 dispatch(setOpenedProductDetails(product))
             }
         }
-        console.log(catalog)
     }, [params, catalog]);
 
     useEffect(() => {
@@ -162,7 +160,7 @@ const ProductPage = () => {
                         <Button
                             variant='default'
                             size='small'
-                            disabled={Object.keys(openedProductDetails.descriptions).length == 0 || disableActionsInModal}
+                            disabled={Object.keys(openedProductDetails?.descriptions || {}).length == 0 || disableActionsInModal}
                             className='mt-1 ms-3'
                             onClick={() => onDeleteDescriptions(openedProductDetails)}
                         >
