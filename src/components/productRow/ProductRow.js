@@ -20,7 +20,13 @@ const ProductRow = (props) => {
     const selectedLength = useSelector(state => state.Form.lengths?.find(length => length.isSelectedFilter === true).value)
 
     const onCopyIdClick = () => {
-        navigator.clipboard.writeText(product._id);
+        const textArea = document.createElement("textarea");
+        textArea.value = product._id;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy"); // Works without HTTPS!
+        document.body.removeChild(textArea);
+        console.log("Copied:", product._id);
     }
     const onGenerateDescription = () => {
         router.push(`/`);
