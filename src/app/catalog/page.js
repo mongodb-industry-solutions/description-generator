@@ -12,6 +12,7 @@ import {
     TableHead,
 } from '@leafygreen-ui/table';
 import Spinner from 'react-bootstrap/Spinner';
+import { H1 } from '@leafygreen-ui/typography';
 //import Code from '@leafygreen-ui/code';
 import { Container } from 'react-bootstrap';
 
@@ -21,6 +22,8 @@ import DescriptionInput from '@/components/descriptionInput/DescriptionInput';
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlertWithDelay } from '@/lib/alerts';
 import { setLengthFilter, setModelFilter } from '@/redux/slices/FormSlice';
 import ProductRow from '@/components/productRow/ProductRow';
+import TalkTrackContainer from '@/components/talkTrackContainer/talkTrackContainer';
+import { catalogPage } from '@/lib/talkTrack';
 
 export default function Page() {
     const router = useRouter();
@@ -96,9 +99,14 @@ export default function Page() {
     }, [])
 
     return (
-        <div className=''>
-            <h2 className="mt-3 mb-3 text-center text-2xl font-bold">Product Catalog</h2>
-            <Container>
+        <Container className=''>
+            <div className='d-flex flex-row align-items-center mb-2'>
+                <div className='d-flex align-items-end w-100'>
+                    <H1 className=''>Product Catalog</H1>
+                </div>
+                <TalkTrackContainer sections={catalogPage} />
+            </div>
+            <div>
                 <div className={`row filtersContainer`}>
                     <div className={` col-12 col-md-6 mb-3 text-center`}>
                         <div className='d-flex flex-row'>
@@ -153,7 +161,7 @@ export default function Page() {
                             </TableBody>
                         </Table>
                 }
-            </Container>
-        </div>
+            </div>
+        </Container>
     );
 }

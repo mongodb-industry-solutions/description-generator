@@ -29,10 +29,10 @@ const ImageUpload = (props) => {
   return (
     <div className={styles.imageUpload}>
       {
-        image
+        image !== null
           ? <div className={`${styles.imageUploadChildContainer} d-flex flex-column align-items-center`}>
             <div className='w-100 d-flex flex-row-reverse'>
-              <IconButton className='me-3 mt-2' onClick={() => setImage(null)} aria-label="Close">
+              <IconButton className='me-3 mt-2' onClick={() => dispatch(setImage(null))} aria-label="Close">
                 <XIcon />
               </IconButton>
             </div>

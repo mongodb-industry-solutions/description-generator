@@ -9,7 +9,7 @@ import IconButton from "@leafygreen-ui/icon-button";
 import PropTypes from "prop-types";
 import styles from "./InfoWizard.module.css";
 import Button from "@leafygreen-ui/button";
-//import { Tabs, Tab } from "@leafygreen-ui/tabs";
+import { Tabs, Tab } from "@leafygreen-ui/tabs";
 
 const InfoWizard = ({
   open,
@@ -43,7 +43,7 @@ const InfoWizard = ({
 
       <Modal open={open} setOpen={setOpen} className={styles.modal}>
         <div className={styles.modalContent}>
-          {/* <Tabs aria-label="info wizard tabs" setSelected={setSelected} selected={selected}>
+          <Tabs aria-label="info wizard tabs" setSelected={setSelected} selected={selected}>
             {sections.map((tab, tabIndex) => (
               <Tab key={tabIndex} name={tab.heading}>
                 {tab.content.map((section, sectionIndex) => (
@@ -86,7 +86,7 @@ const InfoWizard = ({
                 ))}
               </Tab>
             ))}
-          </Tabs> */}
+          </Tabs>
         </div>
       </Modal>
     </>

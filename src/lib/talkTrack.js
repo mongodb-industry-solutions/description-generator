@@ -1,27 +1,52 @@
 export const formPage = [
     {
-        heading: "What is Omnichannel Ordering Solution?",
+        heading: "How to demo",
         content: [
             {
-                heading: "What is Omnichannel Ordering Solution?",
-                body: `
-                The Omnichannel Ordering Solution demo highlights how MongoDB can streamline the
-                shopping experience by integrating online and in- store systems, enabling real-time
-                inventory visibility and efficient order management. This solution supports Buy Online,
-                Pick Up in Store (BOPIS) and home delivery options, reducing logistical issues while
-                enhancing the customer journey. This unified approach ensures smooth transactions,
-                up-to-date inventory, and improved customer satisfaction across multiple touchpoints.
-                `,
+                heading: "Understanding this page",
+                body: `This page contains a formulary to generate descriptions of a product automatically. Onboarding a new product to a catalog means shorter times to market.`,
             },
             {
-                heading: "How to Demo this page",
+                heading: "How to demo this page",
+                body:''
+
+            },
+            {
+                heading: "",
+                body:'Understanding the "Description Generator” page'
+
+            },
+            {
+                heading: "",
                 body: [
+                
                     {
-                        heading: "Click on “Proceed to Checkout”, in case you don’t see that button click first on “Fill cart” to get random products into the cart.",
+                        heading: "You have 4 options in which you can select a product to generate the description",
+                        body: [
+                            'First, by pasting the ObjectId of a product inside the input field and clicking on “Upload”.',
+                            'Second one, by clicking on the Sprinkle button inside the catalog.',
+                            'Third one, by clicking on “Use sample image from catalog” this will always load the same product sample image of a shoe. ',
+                            'And lastly, by clicking on “Upload product image” this will allow you to do the demo with an image that you Upload. Take advantage of this by uploading a product similar to what your prospect would like to see.'
+                        ]
+                    },
+                    {
+                        heading: "You will see the image of the product displayed inside the dotted rectangle.",
                         body: []
                     },
                     {
-                        heading: "Then you should see the “Proceed to checkout” button.",
+                        heading: "Select the Model, Languages (max 3) and Length you want for your descriptions. Note that En, Sp, Fr will be faster to generate than other languages.",
+                        body: []
+                    },
+                    {
+                        heading: "Click on “Generate descriptions",
+                        body: []
+                    },
+                    {
+                        heading: "You will see on the right side the descriptions generated for the selected languages, length and model",
+                        body: []
+                    },
+                    {
+                        heading: "Go back to the “Product Catalog” and you will see the descriptions that were uploaded to the catalog. Just make sure filters align to what you selected when generating the descriptions. To go directly to that product inside the catalog use the button as a shortcut.",
                         body: []
                     }
                 ]
@@ -33,120 +58,160 @@ export const formPage = [
         heading: "Behind the Scenes",
         content: [
             {
-                heading: "Architecture overview (omnichannel)",
+                heading: "Architecture overview",
                 body: "",
             },
-            // {
-            //     image: {
-            //         src: "/rsc/diagrams/omnichannel.svg",
-            //         alt: "Architecture",
-            //     },
-            // },
             {
-                heading: '',
-                body: 'Database modifications are recorded in the oplog as events. The change stream API monitors this log to identify specific changes that applications or triggers are set to observe. Once detected, a change event is created and sent to the appropriate listener, whether it’s an external application or a database trigger, allowing them to respond in real time and initiate actions as needed.'
+                image: {
+                    src: "/talkTrack/Architecture.png",
+                    alt: "Architecture",
+                },
             },
             {
-                heading: "Architecture overview (Agentic RAG chatbot)",
-                body: "",
+                heading: "",
+                body: "The main tech stack components can be found below.",
             },
-            // {
-            //     image: {
-            //         src: "/rsc/diagrams/chatbotDiagram.png",
-            //         alt: "Architecture",
-            //     },
-            // }
+            {
+                heading: "",
+                body: [
+                    "MongoDB Atlas for the database.",
+                    "Togeteher.AI for generating the products descriptions using their available chat LLMs",
+                    "S3 buckets. This can be any file storage system. Such as: GCP buckets, Azure containers or AWS S3 buckets",
+                    "GC Virtual Machine. The deployed app of this demo is deployed on a GC virtual machine.",
+                    "Next.js App Router for the framework"
+                ],
+            },
         ],
     },
     {
         heading: "Why MongoDB?",
         content: [
             {
-                heading: "Easy, Flexible and Fast",
-                body: "MongoDB?s document model combines simplicity and flexibility, aligning with how developers naturally structure and retrieve data. This makes queries more intuitive and improves performance. As business needs evolve, the schema adapts seamlessly, allowing for rapid iteration without rigid constraints.",
+                heading: "MongoDB + TogetherAI",
+                body: `
+                    Product onboarding to a retail e-commerce portal is a time-consuming effort for many retailers. They need to ensure they’ve created a product description that matches the image, then deploy it to their e-commerce portal. For multilingual portals and multiple operating geographies, this challenge of accuracy increases. With Together AI’s support for multimodal models (e.g. Llama 3.2) and MongoDB Atlas’s vector embeddings, we can create accurate product descriptions in multiple languages.
+                `,
             },
             {
-                heading: "Real-Time Data Responsiveness",
-                body: "Leverage MongoDB's Change Streams and Triggers to keep your data synchronized across all systems in real time. Whether updating order statuses or automating processes, MongoDB ensures seamless synchronization, all without adding an extra layer of complexity."
+                heading: "Embeddings and inference with Together AI",
+                body: "Together AI generated product descriptions based on images retrieved from the product catalog using Llama 3.2 vision models. This way, each product’s unique characteristics were considered, then generated in multiple languages. These descriptions could then be embedded into the MongoDB Atlas Vector Search database via a simple API."
             },
             {
-                heading: "Smart Customer Experience with RAG",
-                body: "MongoDB Atlas and Dataworkz combine to deliver Agentic RAG-as-a-Service, improving customer interactions with smart, context-aware AI. Atlas uses vector embeddings for more accurate, meaning-based searches, while its scalable infrastructure ensures reliability during peak traffic. Dataworkz enhances this with agentic workflows powered by RAG pipelines, leveraging semantic search and knowledge graphs to pull the most relevant data for AI-driven responses."
+                heading: "Indexed embeddings with MongoDB Atlas Vector Search",
+                body: "Using MongoDB Atlas Vector Search capabilities, we could create embeddings (as an extended phase of this architecture), and then indexed them to be used to retrieve relevant data based on other matched product queries."
+            },
+            {
+                heading: "Real-time data processing",
+                body: "By connecting this setup to a real-time product dataset, we ensured that product descriptions in multiple languages were always updated automatically. So when a marketplace vendor or retailer uploads new images with distinct characteristics, they get up-to-date product descriptions in the catalog."
             }
         ],
     },
 ]
 export const catalogPage = [
     {
-        heading: "What is a product description generator?",
+        heading: "How to demo",
         content: [
             {
-                heading: "Product description generator?",
-                body: `
-                
-                
-                `,
+                heading: "Understanding this page",
+                body: `This page represent the Retailer's catalog. All this products are inside MongoDB Atlas`,
             },
             {
-                heading: "How to Demo this page",
+                heading: "How to demo this page",
+                body: ''
+
+            },
+            {
+                heading: "",
+                body: "Understand the 'Product catalog' page"
+
+            },
+            {
+                heading: "",
                 body: [
                     {
-                        heading: "Highlight the 2 shipping methods available ‘Buy Online, Pickup in store’ (BOPIS) which shows a list of available stores to pick up the order. And ‘Buy Online, Get Delivery At home’ which shows the address of that specific user",
+                        heading: "Here you can see the entire product catalog, this is stored in MongoDB Atlas",
                         body: []
                     },
                     {
-                        heading: "Click on “Continue” once you have selected your preferred shipping method. This will generate the order and redirect you to the ”Order Details” page.",
+                        heading: "You can filter the catalog with the filters on the green banner. Model refers to the model used to generate the descriptions, and Length refers to the length of the description.",
                         body: []
                     }
                 ]
-
             },
-
+            {
+                image: {
+                    src: "/talkTrack/filters.png",
+                    alt: "Filters",
+                }
+            },
+            {
+                heading: "",
+                body: [
+                    {
+                        heading: "Click on the Sprinkle Icon to generate the description of that product.",
+                        body: []
+                    },
+                    {
+                        heading: "Click on '{}' to see the full document model of that product.",
+                        body: []
+                    },
+                    {
+                        heading: "Click on  in case you want to delete all descriptions of that specific product. (this is to help you continue using one product for the demo, not something differentiative or to highlight from the demo).",
+                        body: []
+                    },
+                ]
+            },
         ],
     },
     {
         heading: "Behind the Scenes",
         content: [
             {
-                heading: "Architecture overview (omnichannel)",
+                heading: "Architecture overview",
                 body: "",
             },
-            // {
-            //     image: {
-            //         src: "/rsc/diagrams/omnichannel.svg",
-            //         alt: "Architecture",
-            //     },
-            // },
             {
-                heading: '',
-                body: 'Database modifications are recorded in the oplog as events. The change stream API monitors this log to identify specific changes that applications or triggers are set to observe. Once detected, a change event is created and sent to the appropriate listener, whether it’s an external application or a database trigger, allowing them to respond in real time and initiate actions as needed.'
+                image: {
+                    src: "/talkTrack/Architecture.png",
+                    alt: "Architecture",
+                },
             },
             {
-                heading: "Architecture overview (Agentic RAG chatbot)",
-                body: "",
+                heading: "",
+                body: "The main tech stack components can be found below.",
             },
-            // {
-            //     image: {
-            //         src: "/rsc/diagrams/chatbotDiagram.png",
-            //         alt: "Architecture",
-            //     },
-            // }
+            {
+                heading: "",
+                body: [
+                    "MongoDB Atlas for the database.",
+                    "Togeteher.AI for generating the products descriptions using their available chat LLMs",
+                    "S3 buckets. This can be any file storage system. Such as: GCP buckets, Azure containers or AWS S3 buckets",
+                    "GC Virtual Machine. The deployed app of this demo is deployed on a GC virtual machine.",
+                    "Next.js App Router for the framework"
+                ],
+            },
         ],
     },
     {
         heading: "Why MongoDB?",
         content: [
             {
-                heading: "Easy, Flexible and Fast",
-                body: "MongoDB?s document model combines simplicity and flexibility, aligning with how developers naturally structure and retrieve data. This makes queries more intuitive and improves performance. As business needs evolve, the schema adapts seamlessly, allowing for rapid iteration without rigid constraints.",
+                heading: "MongoDB + TogetherAI",
+                body: `
+                    Product onboarding to a retail e-commerce portal is a time-consuming effort for many retailers. They need to ensure they’ve created a product description that matches the image, then deploy it to their e-commerce portal. For multilingual portals and multiple operating geographies, this challenge of accuracy increases. With Together AI’s support for multimodal models (e.g. Llama 3.2) and MongoDB Atlas’s vector embeddings, we can create accurate product descriptions in multiple languages.
+                `,
             },
             {
-                heading: "Real-Time Data Responsiveness",
-                body: "Leverage MongoDB's Change Streams and Triggers to keep your data synchronized across all systems in real time. Whether updating order statuses or automating processes, MongoDB ensures seamless synchronization, all without adding an extra layer of complexity."
+                heading: "Embeddings and inference with Together AI",
+                body: "Together AI generated product descriptions based on images retrieved from the product catalog using Llama 3.2 vision models. This way, each product’s unique characteristics were considered, then generated in multiple languages. These descriptions could then be embedded into the MongoDB Atlas Vector Search database via a simple API."
             },
             {
-                heading: "Smart Customer Experience with RAG",
-                body: "MongoDB Atlas and Dataworkz combine to deliver Agentic RAG-as-a-Service, improving customer interactions with smart, context-aware AI. Atlas uses vector embeddings for more accurate, meaning-based searches, while its scalable infrastructure ensures reliability during peak traffic. Dataworkz enhances this with agentic workflows powered by RAG pipelines, leveraging semantic search and knowledge graphs to pull the most relevant data for AI-driven responses."
+                heading: "Indexed embeddings with MongoDB Atlas Vector Search",
+                body: "Using MongoDB Atlas Vector Search capabilities, we could create embeddings (as an extended phase of this architecture), and then indexed them to be used to retrieve relevant data based on other matched product queries."
+            },
+            {
+                heading: "Real-time data processing",
+                body: "By connecting this setup to a real-time product dataset, we ensured that product descriptions in multiple languages were always updated automatically. So when a marketplace vendor or retailer uploads new images with distinct characteristics, they get up-to-date product descriptions in the catalog."
             }
         ],
     },
