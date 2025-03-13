@@ -208,11 +208,7 @@ make build
 make clean
 ```
 
-<<<<<<< HEAD
 ## Authors and Contributors
-=======
-## Authors & Contributors
->>>>>>> cadba3add7fcb565190a4f51feff0fb5c9a3f830
 
 [Prashant Juttukonda](https://www.mongodb.com/blog/authors/prashant-juttukonda) - Retail Principal, Product Owner
 
