@@ -1,7 +1,13 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
+import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from 'react-redux';
-import { Button } from 'react-bootstrap';
+import { Button as BSButton, Container } from 'react-bootstrap';
+import Button from "@leafygreen-ui/button";
+import Icon from '@leafygreen-ui/icon';
+import { H1 } from '@leafygreen-ui/typography';
+
+
 import { useS3Upload } from "next-s3-upload";
 import Spinner from 'react-bootstrap/Spinner';
 
@@ -9,16 +15,20 @@ import styles from './page.module.css'
 import ImageUpload from "@/components/imageUpload/ImageUpload";
 import DescriptionInput from "@/components/descriptionInput/DescriptionInput";
 import { fetchDescriptions, fetchProducts, updateDescriptionsToMongoDB } from '@/lib/api';
-import { setInitialLoad, setProducts, updateProduct } from '@/redux/slices/ProductsSlice';
+import { setInitialLoad, setOpenedProductDetails, setProducts, updateProduct } from '@/redux/slices/ProductsSlice';
 import TextInput from '@leafygreen-ui/text-input';
-import { getProductImageFromObjectId } from '@/lib/helpers';
+import { getProductFromObjectId, setProductImageInFormFromObjectId } from '@/lib/helpers';
 import { setLanguage, setLength, setModel, setImage, setResult, setGeneratingDescription } from '@/redux/slices/FormSlice';
 import DescriptionOutput from '@/components/descriptionOutput/DescriptionOutput';
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlert, closeAlertWithDelay } from '@/lib/alerts';
+import Image from 'next/image';
+import TalkTrackContainer from '@/components/talkTrackContainer/talkTrackContainer';
+import { formPage } from '@/lib/talkTrack';
 
 
 export default function Home() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const image = useSelector(state => state.Form.image)
   const selectedModel = useSelector(state => state.Form.selectedModel)
   const modelOptions = useSelector(state => state.Form.models)
@@ -42,12 +52,13 @@ export default function Home() {
     dispatch(setModel(selectedOption.value))
   }
   const onLanguageChange = (selectedOption) => {
-    dispatch(setLanguage(selectedOption.value))    
+    dispatch(setLanguage(selectedOption.value))
   }
   const onLengthChange = (selectedOption) => {
     dispatch(setLength(selectedOption.value))
   }
   const onGenerateClick = async () => {
+    dispatch(setResult(null))
     const body = {
       languages: selectedLanguages,
       imageUrl: image,
@@ -59,26 +70,28 @@ export default function Home() {
       return;
     dispatch(setGeneratingDescription(true));
     const response = await fetchDescriptions(body)
-    if (response) {
+    if (response && response?.descriptions?.length > 0) {
       dispatch(setResult(response))
       dispatch(setGeneratingDescription(false));
       const updateMDBRes = new Date()
-      addOperationAlert({id: updateMDBRes.getMilliseconds(), title: 'Update One operation', message: 'Saving descriptions of product in MongoDB'})
+      addOperationAlert({ id: updateMDBRes.getMilliseconds(), title: 'Update One operation', message: 'Saving descriptions of product in MongoDB' })
       const updatedProductDocument = await updateDescriptionsToMongoDB(response)
       if (updatedProductDocument) {
+        dispatch(setResult({ ...response, _id: updatedProductDocument._id }))
         dispatch(updateProduct(updatedProductDocument))
-        addSucAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Description of product stored in MongoDB`})
-      }else{
-        addWarnAutoCloseAlertHnd({id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Error storing description of product in MongoDB`})
+        addSucAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Description of product stored in MongoDB` })
+      } else {
+        addWarnAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'Update One operation', message: `Error storing description of product in MongoDB` })
       }
       closeAlertWithDelay(updateMDBRes.getMilliseconds(), 1500)
+    } else {
+      addWarnAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'An error ocured generating the descriptions' })
     }
     dispatch(setGeneratingDescription(false));
   }
   const onLoadImageFromObjectId = () => {
-    const imageId = getProductImageFromObjectId(productIdRef.current.value)
+    const imageId = setProductImageInFormFromObjectId(productIdRef.current.value)
     console.log(imageId)
-    dispatch(setImage(imageId))
   }
   const onLoadSampleImage = () => {
     // TODO. replace this hard coded URL with an API call that:
@@ -87,7 +100,7 @@ export default function Home() {
     // TODO. use sampleImageLoading variable to handle loading state while the api is retrieving the sample image
     // when sampleImageLoading  is true the button "Use sample image from catalog" should be disabled and have opacity
     // when sampleImageLoading  is true the ImageUpload component should show a Loading spinner
-    dispatch(setImage("https://m.media-amazon.com/images/I/81seiXB5drL.jpg"))    
+    dispatch(setImage("https://m.media-amazon.com/images/I/81seiXB5drL.jpg"))
   }
 
   useEffect(() => {
@@ -96,11 +109,11 @@ export default function Home() {
     const getAllCatalogProducts = async () => {
       const alertFetchProds = 'alertFetchProds'
       dispatch(setInitialLoad(true))
-      addOperationAlert({id: alertFetchProds, title: 'Loading catalog'})
+      addOperationAlert({ id: alertFetchProds, title: 'Loading catalog' })
       try {
         const response = await fetchProducts();
         console.log(response.length)
-        if (response){
+        if (response) {
           dispatch(setProducts(response))
           addSucAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'Catalog loaded', duration: 3000 })
         }
@@ -116,8 +129,13 @@ export default function Home() {
   }, [])
 
   return (
-    <div className=''>
-      <h2 className="mt-3 mb-3 text-center text-2xl font-bold">Descriptor Generator</h2>
+    <Container className=''>
+      <div className='d-flex flex-row align-items-center mb-2'>
+        <div className='d-flex align-items-end w-100'>
+          <H1 className=''>Description Generator</H1>
+        </div>
+        <TalkTrackContainer sections={formPage} />
+      </div>
       <div className="container" onClick={() => console.log(result)}>
         <div className="row ">
           <div className={`${styles.leftSide} col-12 col-md-6 p-3 mb-3 text-center`}>
@@ -126,24 +144,24 @@ export default function Home() {
               <TextInput
                 label="Use product from catalog"
                 placeholder="Enter ObjectId"
-                onChange={event => { 
+                onChange={event => {
                   console.log(event)
-                  setDisableUpload(productIdRef == null || productIdRef?.current?.value == null || productIdRef?.current?.value == '' || productIdRef?.current?.value.length <= 0) 
+                  setDisableUpload(productIdRef == null || productIdRef?.current?.value == null || productIdRef?.current?.value == '' || productIdRef?.current?.value.length <= 0)
                 }}
                 ref={productIdRef}
               />
-              <Button
+              <BSButton
                 className={`${styles.submitBtn} ms-2`}
-                style={{height: '36px'}}
+                style={{ height: '36px' }}
                 onClick={() => onLoadImageFromObjectId()}
                 disabled={disableUpload}
               >
                 Upload
-              </Button>
+              </BSButton>
             </div>
             <ImageUpload image={image} setImage={setImage} uploadToS3={uploadToS3} />
             <div className={`d-flex flex-row-reverse mb-3`}>
-              <small onClick={() => onLoadSampleImage()}  className={`${styles.cursorPointer} ${styles.sampleText} mt-1`}>Use sample image from catalog</small>
+              <small onClick={() => onLoadSampleImage()} className={`${styles.cursorPointer} ${styles.sampleText} mt-1`}>Use sample image from catalog</small>
             </div>
             <DescriptionInput
               title="Model"
@@ -158,7 +176,7 @@ export default function Home() {
               options={languagesOptions}
               onSelectionChange={onLanguageChange}
               disableUnselectedOptions={selectedLanguages.length >= 3}
-              disabledLanguages = {languagesDisabled}
+              disabledLanguages={languagesDisabled}
             />
             <hr />
             <DescriptionInput
@@ -168,7 +186,7 @@ export default function Home() {
               onSelectionChange={onLengthChange}
             />
             <div className="d-flex flex-row-reverse mb-3 mt-3">
-              <Button
+              <BSButton
                 className={`mt-3 ${styles.submitBtn}`}
                 disabled={selectedLanguages.length === 0 || image === null || generatingDescription}
                 onClick={() => onGenerateClick()}
@@ -181,7 +199,7 @@ export default function Home() {
                     </div>
                     : 'Generate Descriptions'
                 }
-              </Button>
+              </BSButton>
             </div>
           </div>
           <div className={`${styles.rightSide} col-12 col-md-6 mb-3 ps-3 pe-3 text-center`}>
@@ -199,8 +217,17 @@ export default function Home() {
                   : <div className=''>
                     <h4>Generated descriptions</h4>
                     {
+                      result.imageUrl && <Image
+                        src={result?.imageUrl}
+                        width={100}
+                        height={100}
+                        style={{ objectFit: "contain", padding: '4px' }}
+                        alt='Product'
+                      ></Image>
+                    }
+                    {
                       result?.descriptions.map((description, index) => (
-                        <DescriptionOutput 
+                        <DescriptionOutput
                           key={index}
                           language={description.language}
                           languageLabel={languagesOptions.find(l => l.value === description.language)?.label}
@@ -211,11 +238,23 @@ export default function Home() {
                         />
                       ))
                     }
+                    <Button
+                      leftGlyph={<Icon glyph="AllProducts" />}
+                      variant='primaryOutline'
+                      onClick={() => {
+                        console.log(result);
+                        dispatch(setOpenedProductDetails(getProductFromObjectId(result._id)))
+                        router.push(`/catalog/${result._id}`)
+                      }}
+                      disabled={!result._id}
+                    >
+                      See product inside catalog
+                    </Button>
                   </div>
             }
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

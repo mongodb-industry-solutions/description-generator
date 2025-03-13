@@ -25,6 +25,17 @@ export async function POST(req) {
   let rawResponse;
 
   try {
+    console.log("--------  API CALL START --------------");
+    const CONTENT_TEXT = `
+      Given an image of a product, generate a JSON array containing an Amazon-like sales product description in each of the following languages: ${languages.map((language) => `"${language}"`).join(", ")}.
+
+      - The description should be generic and must not include any brand names or copyrighted terms.
+      - The desription must be a maximum of ${length === 'short' ? '30' : length === 'medium' ? '50' : '85'} words.
+      - Return a JSON array with ${languages.length} objects, each following this structure: { "language": string, "description": string }.
+      - The response must contain only JSON, with no extra text or explanations.
+      - It is very important that you follow these instructions exactly. PLEASE ONLY RETURN JSON FORMAT, NOTHING ELSE.
+      `
+    console.log("--------  CONTENT TEXT --------------\n", CONTENT_TEXT);
     const res = await together.chat.completions.create({
       model,
       temperature: 0.2,
@@ -32,25 +43,14 @@ export async function POST(req) {
       messages: [
         {
           role: "system",
-          content: `
-          You are a helpful product description generator that ONLY respondes with JSON.
-          `,
+          content: `You are a helpful product description generator that ONLY respondes with JSON.`,
         },
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: `Given this product image, return JSON of an Amazon-like sales product description in each of these languages. ${languages
-                .map((language) => `"${language}"`)
-                .join(", ")}
-
-              The desription of the product must be maximum ${length === 'short' ? '30' : length === 'medium' ? '50' : '85'} words
-
-              Return a JSON object in the following shape: [{language: string, description: string},...]
-
-              It is very important for my career that you follow these instructions exactly. PLEASE ONLY RETURN JSON, NOTHING ELSE.
-              `,
+              text: CONTENT_TEXT,
             },
             {
               type: "image_url",
@@ -62,9 +62,11 @@ export async function POST(req) {
         },
       ],
     });
+    console.log("--------  API CALL RES --------------\n", res);
 
     rawResponse = res.choices[0].message?.content;
     descriptions = JSON.parse(rawResponse || "[]");
+    console.log("--------  API CALL ENDED --------------");
     console.log({ rawResponse, descriptions });
   } catch (error) {
     const productDescriptionSchema = z.array(
@@ -98,7 +100,8 @@ export async function POST(req) {
     });
 
     descriptions = JSON.parse(extract?.choices?.[0]?.message?.content || "[]");
-    console.error(error);
+    console.error('------- ERROR DESC --------\n', descriptions);
+    console.error('------- ERROR ERR--------\n', error);
   }
 
   return Response.json({descriptions, model, length, imageUrl});

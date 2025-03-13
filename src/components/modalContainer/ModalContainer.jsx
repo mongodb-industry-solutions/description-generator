@@ -7,10 +7,11 @@ import { Modal, Container } from 'react-bootstrap';
 import styles from "./modalContainer.module.css";
 
 const ModalContainer = (props) => {
-    const {allowClose, open, setOpen, children, onCloseCallback = null} = props;
+    const {allowClose, open, setOpen = null, children, onCloseCallback = null} = props;
   
     const handleClose = () => {
-        setOpen(false)
+        if(setOpen)
+            setOpen(false)
         if(onCloseCallback !== null)
             onCloseCallback()
     }
