@@ -9,7 +9,7 @@
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#initial-configuration">Initial Configuration</a></li>
     <li><a href="#demo-overview">Demo Overview</a></li>
-    <li><a href="#authors-&-contributors">Authors & Contributors</a></li>
+    <li><a href="#authors-and-contributors">Authors & Contributors</a></li>
   </ol>
 </details>
 
@@ -208,7 +208,7 @@ make build
 make clean
 ```
 
-## Authors & Contributors
+## Authors and Contributors
 
 [Prashant Juttukonda](https://www.mongodb.com/blog/authors/prashant-juttukonda) - Retail Principal, Product Owner
 
