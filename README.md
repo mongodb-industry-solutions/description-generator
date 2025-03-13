@@ -58,7 +58,7 @@ The product along with its description will be then updated in real time inside 
 
 And just as an example, take the diagram below.
 
-![image](./resources/media/Architecture.png)
+![image](./resources/media/ArchitectureExpand.png)
 
 
 Of how this architecture can scale, think of adding MongoDB Change Streams to allow real-time updates on any application listening to the catalog. For example the e-commerce portal, or a social media platform.
