@@ -11,14 +11,15 @@ import styles from "./InfoWizard.module.css";
 import Button from "@leafygreen-ui/button";
 import { Tabs, Tab } from "@leafygreen-ui/tabs";
 
-const InfoWizard = ({
-  open,
-  setOpen,
-  tooltipText = "Learn more",
-  iconGlyph = "Wizard",
-  sections = [],
-  openModalIsButton = false
-}) => {
+const InfoWizard = (props) => {
+  const {
+    open,
+    setOpen,
+    tooltipText = "Learn more",
+    iconGlyph = "Wizard",
+    sections = [],
+    openModalIsButton = false
+  } = props
   const [selected, setSelected] = useState(0);
 
   return (
