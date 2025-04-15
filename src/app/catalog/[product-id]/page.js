@@ -8,8 +8,8 @@ import ModalContainer from '@/components/modalContainer/ModalContainer'
 import Button from '@leafygreen-ui/button'
 import Image from 'next/image'
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlertWithDelay } from "@/lib/alerts";
-import { deleteProductFromMDB, fetchProducts } from "@/lib/api";
-import { deleteProduct, setInitialLoad, setOpenedProductDetails, setProducts } from "@/redux/slices/ProductsSlice";
+import { deleteDescriptions, deleteProductFromMDB, fetchProducts } from "@/lib/api";
+import { deleteProduct, deleteProductDescriptions, setInitialLoad, setOpenedProductDetails, setProducts } from "@/redux/slices/ProductsSlice";
 import { Spinner } from 'react-bootstrap';
 import { getProductFromObjectId } from '@/lib/helpers';
 

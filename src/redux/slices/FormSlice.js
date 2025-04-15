@@ -26,14 +26,21 @@ export const MODELS = [
         value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
         label: "Llama 3.2 11B",
         isSelected: true,
-        isSelectedFilter: true
+        isSelectedFilter: true,
     },
     {
         value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
         label: "Llama 3.2 90B",
         isSelected: false,
+        isDisabled:true,
         isSelectedFilter: false
     },
+    {
+        value: "Qwen/Qwen2-VL-72B-Instruct",
+        label: "Qwen2-VL-72B-Instruct",
+        isSelected: false,
+        isSelectedFilter: false
+    }
 ];
 export const LANGUAGES = [
     { value: "en", label: "English", isSelected: true},

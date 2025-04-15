@@ -95,7 +95,7 @@ export async function POST(req) {
           content: rawResponse || "",
         },
       ],
-      model: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+      model: model,// "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
       response_format: { type: "json_object", schema: jsonSchema },
     });
 
