@@ -8,6 +8,7 @@ import FileIcon from '@leafygreen-ui/icon/dist/File';
 
 import styles from "./imageUpload.module.css";
 import { setImage } from '@/redux/slices/FormSlice';
+import { uploadFile } from '@/lib/api';
 
 const ImageUpload = (props) => {
   const dispatch = useDispatch();
@@ -20,9 +21,11 @@ const ImageUpload = (props) => {
     setLoading(true)
     const file = event.target.files?.[0];
     if (!file) return;
-    const { url } = await uploadToS3(file);
+    //const { url } = await uploadToS3(file);
+    const { url } = await uploadFile(file);
     console.log('uploadToS3', url)
-    dispatch(setImage(url))
+
+    dispatch(setImage(url !== undefined ? url : null))
     setLoading(false)
   };
 

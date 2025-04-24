@@ -83,3 +83,17 @@ export async function deleteProductFromMDB(props) {
   const descriptions = await response.json();
   return descriptions;
 }
+
+export async function uploadFile(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("/api/s3-upload-client", {
+    method: "POST",
+    body: formData,
+  });
+
+  const { url } = await res.json();
+  console.log("File uploaded to:", url);
+  return {url}
+}

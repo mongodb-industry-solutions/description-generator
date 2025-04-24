@@ -4,7 +4,13 @@ services:
       context: .
       dockerfile: Dockerfile.app
     image: description-generator:latest
+    volumes:
+      - ~/.aws/credentials:/root/.aws/credentials:ro
+      - ~/.aws/config:/root/.aws/config:ro
+      - ~/.aws/sso/cache:/root/.aws/sso/cache:rw
     ports:
       - "3003:3003"
     restart: always
     container_name: description-generator
+
+

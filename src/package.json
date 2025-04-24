@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0 -p 3003",
+    "dev": "AWS_PROFILE=default next dev -H 0.0.0.0 -p 3003",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p 3003",
+    "start": "AWS_PROFILE=default next start -H 0.0.0.0 -p 3003",
     "lint": "next lint"
   },
   "dependencies": {
