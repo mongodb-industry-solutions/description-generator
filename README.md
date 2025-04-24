@@ -69,7 +69,7 @@ Before you begin, ensure you have met the following requirements:
 
 - **MongoDB Atlas Account.** Create an Atlas account at https://cloud.mongodb.com and provision a Cluster. You can follow the instructions from this article to set up your Cluster.
 - **Together.AI Account.** This will be required to access the Models.
-- **AWS account.** This is important if you want to upload a specific product picture from your file system instead of using one from the provided product catalog. Create a new bucket in your AWS account and generate an IAM user with programmatic access. Save the access key and secret key for your .env file.
+- **AWS account.** This is important if you want to upload a specific product picture from your file system instead of using one from the provided product catalog. Create a new bucket in your AWS account and generate an IAM role AmazonS3FullAccess policy. Authenticate in your local machine with ``` aws sso login --profile default ```
 - **Install Node.** This will be required to install the node modules which contain all the necessary packages to run our demo. 
 - **Install Git.** This will be required to clone the demo repository.
 
@@ -100,8 +100,6 @@ TOGETHER_API_KEY=
 MONGODB_URI=
 DB_NAME=TogetherMDB
 COLLECTION_NAME=product
-S3_UPLOAD_KEY=<aws-access-key>
-S3_UPLOAD_SECRET=<aws-secret-key>
 S3_UPLOAD_BUCKET=<name-of-aws-bucket>
 S3_UPLOAD_REGION=<region-of-your-aws-bucket>
 ```
@@ -129,8 +127,6 @@ TOGETHER_API_KEY=<your-user-key>
 MONGODB_URI=
 DB_NAME=TogetherMDB
 COLLECTION_NAME=product
-S3_UPLOAD_KEY=<aws-access-key>
-S3_UPLOAD_SECRET=<aws-secret-key>
 S3_UPLOAD_BUCKET=<name-of-aws-bucket>
 S3_UPLOAD_REGION=<region-of-your-aws-bucket>
 ```
@@ -157,8 +153,6 @@ TOGETHER_API_KEY=<your-user-key>
 MONGODB_URI=mongodb+srv://<username>:<password>@<clusterAddress>
 DB_NAME=TogetherMDB
 COLLECTION_NAME=product
-S3_UPLOAD_KEY=<aws-access-key>
-S3_UPLOAD_SECRET=<aws-secret-key>
 S3_UPLOAD_BUCKET=<name-of-aws-bucket>
 S3_UPLOAD_REGION=<region-of-your-aws-bucket>
 ```
