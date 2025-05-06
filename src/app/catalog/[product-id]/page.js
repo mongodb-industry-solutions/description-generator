@@ -8,7 +8,7 @@ import ModalContainer from '@/components/modalContainer/ModalContainer'
 import Button from '@leafygreen-ui/button'
 import Image from 'next/image'
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlertWithDelay } from "@/lib/alerts";
-import { deleteDescriptions, deleteProductFromMDB, fetchProducts } from "@/lib/api";
+import { deleteDescriptions, deleteFile, deleteProductFromMDB, fetchProducts } from "@/lib/api";
 import { deleteProduct, deleteProductDescriptions, setInitialLoad, setOpenedProductDetails, setProducts } from "@/redux/slices/ProductsSlice";
 import { Spinner } from 'react-bootstrap';
 import { getProductFromObjectId } from '@/lib/helpers';
@@ -40,7 +40,7 @@ const ProductPage = () => {
             router.push(`/catalog`);
             dispatch(setOpenedProductDetails(null))
             if (response.modifiedCount > 0 || response.acknowledged == true) {
-                dispatch(deleteProduct({ _id: response._id, imageUrl: response.imageUrl }))
+                ///////dispatch(deleteProduct({ _id: response._id, imageUrl: response.imageUrl }))
                 addSucAutoCloseAlertHnd({
                     id: (new Date()).getMilliseconds(),
                     title: 'Delete operation',
@@ -48,6 +48,12 @@ const ProductPage = () => {
                     duration: 4000
                 })
                 closeAlertWithDelay(deletingId.getMilliseconds(), 1500)
+                // delete image from bucket
+                try {
+                    deleteFile(openedProductDetails.imageUrl)
+                } catch (error) {
+                    console.log(error)
+                }
             }
         } catch (error) {
             addWarnAutoCloseAlertHnd({

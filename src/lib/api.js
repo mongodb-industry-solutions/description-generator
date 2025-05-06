@@ -98,3 +98,18 @@ export async function uploadFile(file) {
   console.log("File uploaded to:", res);
   return {url: res.url}
 }
+
+export async function deleteFile(imageUrl) {
+  const key = new URL(imageUrl).pathname.slice(1);
+  let res = await fetch("/api/s3-delete", {
+    method: "POST",
+    body:JSON.stringify({
+      key
+    }),
+  });
+
+  res = await res.json();
+
+  console.log("File deleted::", res);
+  return {res}
+}
