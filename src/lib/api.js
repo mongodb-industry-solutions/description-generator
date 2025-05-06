@@ -88,12 +88,13 @@ export async function uploadFile(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch("/api/s3-upload-client", {
+  let res = await fetch("/api/s3-upload", {
     method: "POST",
     body: formData,
   });
 
-  const { url } = await res.json();
-  console.log("File uploaded to:", url);
-  return {url}
+  res = await res.json();
+
+  console.log("File uploaded to:", res);
+  return {url: res.url}
 }
