@@ -102,6 +102,8 @@ export async function POST(req) {
     descriptions = JSON.parse(extract?.choices?.[0]?.message?.content || "[]");
     console.error('------- ERROR DESC --------\n', descriptions);
     console.error('------- ERROR ERR--------\n', error);
+    return Response.json(error);
+
   }
 
   return Response.json({descriptions, model, length, imageUrl});

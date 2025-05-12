@@ -19,7 +19,9 @@ export async function fetchDescriptions(body) {
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    throw new Error(`Error fetching cart: ${response.status}`);
+    console.log(response)
+    const error = await response.json();
+    return {code: error.status, message: error.error.message }
   }
   const descriptions = await response.json();
   console.log(descriptions)

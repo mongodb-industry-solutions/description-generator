@@ -85,7 +85,12 @@ export default function Home() {
       }
       closeAlertWithDelay(updateMDBRes.getMilliseconds(), 1500)
     } else {
-      addWarnAutoCloseAlertHnd({ id: (new Date()).getMilliseconds(), title: 'An error ocured generating the descriptions' })
+      console.log('response',response)
+      addWarnAutoCloseAlertHnd({ 
+        id: (new Date()).getMilliseconds(), 
+        title: 'An error ocured generating the descriptions', 
+        message:`${response.status}: ${response.error.error.message}` 
+      })
     }
     dispatch(setGeneratingDescription(false));
   }

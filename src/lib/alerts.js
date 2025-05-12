@@ -33,7 +33,7 @@ export const addSucAutoCloseAlertHnd = (props) => {
     }));
 }
 export const addWarnAutoCloseAlertHnd = (props) => {
-    let { id, title, message = '', duration=5000 } = props;
+    let { id, title, message = '', duration=9000 } = props;
     store.dispatch(addAlert({
         id: id, // Make sure to give a unique ID for each alert
         title: title,
