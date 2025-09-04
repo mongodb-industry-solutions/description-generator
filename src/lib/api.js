@@ -20,8 +20,11 @@ export async function fetchDescriptions(body) {
   });
   if (!response.ok) {
     console.log(response)
-    const error = await response.json();
-    return {code: error.status, message: error.error.message }
+    let error = response;
+    if (typeof error !== 'object' || error === null) {
+      error = await response.json();
+    }
+    return {status: error.status, message: error?.error?.message || 'Unknown error' }
   }
   const descriptions = await response.json();
   console.log(descriptions)

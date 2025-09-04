@@ -7,7 +7,7 @@ export async function POST() {
 
   try {
     const collection = await connectToDatabase(dbName, collectionName);
-    const documents = await collection.find({}).toArray();
+    const documents = await collection.find({}).sort({ _id: -1 }).toArray();
 
     return NextResponse.json(documents);
   } catch (error) {

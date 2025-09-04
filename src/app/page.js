@@ -89,7 +89,7 @@ export default function Home() {
       addWarnAutoCloseAlertHnd({ 
         id: (new Date()).getMilliseconds(), 
         title: 'An error ocured generating the descriptions', 
-        message:`${response.status}: ${response.error.error.message}` 
+        message:`${response?.status}: ${response?.message}` 
       })
     }
     dispatch(setGeneratingDescription(false));

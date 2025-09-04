@@ -1,46 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const MODELS = [
-    // {
-    //     value: "google/gemma-2-27b-it",
-    //     label: "Gemma-2 Instruct (27B)",
-    //     isSelected: false,
-    //     isSelectedFilter: false,
-    //     isDisabled: true
-    // },
-    // {
-    //     value: "google/gemma-2b-it",
-    //     label: "Gemma Instruct (2B)",
-    //     isSelected: false,
-    //     isSelectedFilter: false,
-    //     isDisabled: true
-    // },
-    // {
-    //     value: "google/gemma-2-9b-it",
-    //     label: "Gemma-2 Instruct (9B)",
-    //     isSelected: false,
-    //     isSelectedFilter: false,
-    //     isDisabled: true
-    // },
     {
-        value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-        label: "Llama 3.2 11B",
+        value: "Qwen/Qwen2.5-VL-72B-Instruct",
+        label: "Qwen2.5 Vision Language 72B Instruct",
         isSelected: true,
+        isSelectedFilter: false
+    },
+    {
+        value: "meta-llama/Llama-Vision-Free",
+        label: "Llama 3.2 11B Free",
+        isSelected: false,
+        isSelectedFilter: true,
+        isDisabled:true
+    },
+    {
+        value: "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+        label: "Llama 4 Scout",
+        isSelected: false,
         isSelectedFilter: true,
     },
-    {
-        value: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-        label: "Llama 3.2 90B",
-        isSelected: false,
-        isDisabled:true,
-        isSelectedFilter: false
-    },
-    {
-        value: "Qwen/Qwen2-VL-72B-Instruct",
-        label: "Qwen2-VL-72B-Instruct",
-        isSelected: false,
-        isSelectedFilter: false
-    }
 ];
 export const LANGUAGES = [
     { value: "en", label: "English", isSelected: true},
