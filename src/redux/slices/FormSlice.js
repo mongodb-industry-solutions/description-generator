@@ -4,7 +4,7 @@ export const MODELS = [
     {
         value: "Qwen/Qwen2.5-VL-72B-Instruct",
         label: "Qwen2.5 Vision Language 72B Instruct",
-        isSelected: true,
+        isSelected: false,
         isSelectedFilter: false
     },
     {
@@ -17,7 +17,7 @@ export const MODELS = [
     {
         value: "meta-llama/Llama-4-Scout-17B-16E-Instruct",
         label: "Llama 4 Scout",
-        isSelected: false,
+        isSelected: true,
         isSelectedFilter: true,
     },
 ];
