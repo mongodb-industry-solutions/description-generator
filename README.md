@@ -123,7 +123,7 @@ Navigate to your account and retrieve your user key which can be found inside yo
 Assign the user key to the TOGETHER_API_KEY variable replacing and with your actual credentials and save the changes. Your .env.local file should now resemble the following:
 
 ```
-TOGETHER_API_KEY=<your-user-key>
+TOGETHER_API_KEY=
 MONGODB_URI=
 DB_NAME=TogetherMDB
 COLLECTION_NAME=product
@@ -140,17 +140,11 @@ When choosing your connection method for MongoDB, select the option labeled ‘D
 
 ***Figure 1.*** Atlas screen to choose a connection method.
 
-Once you select the ‘Drivers’ option copy the provided connection string. It should look something like this:
+Once you select the ‘Drivers’ option copy the provided connection string. This is the final variable needed for your .env.local file. Assign the connection string to the MONGODB_URI variable replacing and with your actual credentials and save the changes. Your .env.local file should now resemble the following:
 
 ```
-mongodb+srv://<username>:<password>@<clusterAddress>
-```
-
-Great job! You have obtained the final variable needed for your .env.local file. Assign the connection string to the MONGODB_URI variable replacing and with your actual credentials and save the changes. Your .env.local file should now resemble the following:
-
-```
-TOGETHER_API_KEY=<your-user-key>
-MONGODB_URI=mongodb+srv://<username>:<password>@<clusterAddress>
+TOGETHER_API_KEY=
+MONGODB_URI=<your-connection-string>
 DB_NAME=TogetherMDB
 COLLECTION_NAME=product
 S3_UPLOAD_BUCKET=<name-of-aws-bucket>
@@ -167,7 +161,7 @@ Use the [mongorestore](https://www.mongodb.com/docs/database-tools/mongorestore/
 Let's go back to your terminal, navigate to the directory /description-generator (the root level of the application code), and run the following command:
 
 ```
-mongorestore --gzip --dir=dump/TogetherMDB --db=TogetherMDB --uri "mongodb+srv://<user>:<password>@<cluster-url>"
+mongorestore --gzip --dir=dump/TogetherMDB --db=TogetherMDB --uri MONGODB_URI"
 ```
 
 This command will create the database and collections and log its progress. 
