@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { connectToDatabase, closeDatabase } from "@/lib/mongodb";
 
 export async function POST() {
-  const dbName = process.env.DB_NAME;
-  const collectionName = process.env.COLLECTION_NAME;
+  const dbName = process.env.DB_NAME || "TogetherMDB";
+  const collectionName = process.env.COLLECTION_NAME || "product";
 
   try {
     const collection = await connectToDatabase(dbName, collectionName);

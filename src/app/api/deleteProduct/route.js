@@ -3,8 +3,8 @@ import { connectToDatabase, closeDatabase } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export async function POST(request) {
-  const dbName = process.env.DB_NAME;
-  const collectionName = process.env.COLLECTION_NAME;
+  const dbName = process.env.DB_NAME || "TogetherMDB";
+  const collectionName = process.env.COLLECTION_NAME || "product";
 
   try {
     let { _id, imageUrl } = await request.json();
