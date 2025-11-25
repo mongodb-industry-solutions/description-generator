@@ -18,21 +18,6 @@ serviceAccount:
   create: true
   name: description-generator-production-sa
 
-# Health check configuration
-livenessProbe:
-  httpGet:
-    path: /
-    port: 8080
-  initialDelaySeconds: 30
-  periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
-
 # Resource limits for production (higher than staging)
 resources:
   limits:
@@ -61,5 +46,12 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 70
 
-# Container port
-containerPort: 8080
+# Health check probes (correct format for web-app chart)
+healthcheck:
+  enabled: true
+  path: /
+  port: 8080
+
+# Container configuration
+container:
+  port: 8080

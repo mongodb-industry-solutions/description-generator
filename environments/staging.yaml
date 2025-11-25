@@ -1,6 +1,11 @@
 # Staging environment configuration for Description Generator
 # This file configures the Kanopy deployment for staging
 
+# Environment secrets - references the description-generator-staging secret
+# Expected variables in the secret:
+# - S3_UPLOAD_KEY, S3_UPLOAD_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+# - S3_UPLOAD_BUCKET, S3_UPLOAD_REGION, TOGETHER_API_KEY
+# - MONGODB_URI, DB_NAME, COLLECTION_NAME
 envSecrets:
   S3_UPLOAD_KEY: description-generator-staging
   S3_UPLOAD_SECRET: description-generator-staging
@@ -18,21 +23,6 @@ envSecrets:
 serviceAccount:
   create: true
   name: description-generator-staging-sa
-
-# Health check configuration
-livenessProbe:
-  httpGet:
-    path: /
-    port: 8080
-  initialDelaySeconds: 30
-  periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
 
 # Resource limits for staging
 resources:
@@ -62,5 +52,12 @@ autoscaling:
   maxReplicas: 3
   targetCPUUtilizationPercentage: 80
 
-# Container port
-containerPort: 8080
+# Health check probes (correct format for web-app chart)
+healthcheck:
+  enabled: true
+  path: /
+  port: 8080
+
+# Container configuration
+container:
+  port: 8080
