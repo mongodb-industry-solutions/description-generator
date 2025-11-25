@@ -1,57 +1,24 @@
-# Production environment configuration for Description Generator
-# This file configures the Kanopy deployment for production
+# Staging environment configuration for Description Generator
+# This file configures the Kanopy deployment for staging
+
+# Environment secrets - references the description-generator-prod secret
+# Expected variables in the secret:
+# - S3_UPLOAD_KEY, S3_UPLOAD_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+# - S3_UPLOAD_BUCKET, S3_UPLOAD_REGION, TOGETHER_API_KEY
+# - MONGODB_URI, DB_NAME, COLLECTION_NAME
 
 envSecrets:
-  S3_UPLOAD_KEY: description-generator-staging
-  S3_UPLOAD_SECRET: description-generator-staging
-  AWS_ACCESS_KEY_ID: description-generator-staging
-  AWS_SECRET_ACCESS_KEY: description-generator-staging
-  S3_UPLOAD_BUCKET: description-generator-staging
-  S3_UPLOAD_REGION: description-generator-staging
-  TOGETHER_API_KEY: description-generator-staging
-  MONGODB_URI: description-generator-staging
-  DB_NAME: description-generator-staging
-  COLLECTION_NAME: description-generator-staging
+  S3_UPLOAD_KEY: description-generator-prod
+  S3_UPLOAD_SECRET: description-generator-prod
+  AWS_ACCESS_KEY_ID: description-generator-prod
+  AWS_SECRET_ACCESS_KEY: description-generator-prod
+  S3_UPLOAD_BUCKET: description-generator-prod
+  S3_UPLOAD_REGION: description-generator-prod
+  TOGETHER_API_KEY: description-generator-prod
+  MONGODB_URI: description-generator-prod
+  DB_NAME: description-generator-prod
+  COLLECTION_NAME: description-generator-prod
 
-# Service account configuration
-serviceAccount:
-  create: true
-  name: description-generator-production-sa
-
-# Resource limits for production (higher than staging)
-resources:
-  limits:
-    cpu: 2000m
-    memory: 2048Mi
-  requests:
-    cpu: 500m
-    memory: 512Mi
-
-# Ingress configuration
-ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-
-# Service mesh configuration
-mesh:
-  enabled: true
   
-# Horizontal Pod Autoscaler
-autoscaling:
+serviceAccount:
   enabled: true
-  minReplicas: 2
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 70
-
-# Health check probes (correct format for web-app chart)
-healthcheck:
-  enabled: true
-  path: /
-  port: 8080
-
-# Container configuration
-container:
-  port: 8080
