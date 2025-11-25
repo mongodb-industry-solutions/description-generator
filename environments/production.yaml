@@ -1,0 +1,24 @@
+# Staging environment configuration for Description Generator
+# This file configures the Kanopy deployment for staging
+
+# Environment secrets - references the description-generator-prod secret
+# Expected variables in the secret:
+# - S3_UPLOAD_KEY, S3_UPLOAD_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+# - S3_UPLOAD_BUCKET, S3_UPLOAD_REGION, TOGETHER_API_KEY
+# - MONGODB_URI, DB_NAME, COLLECTION_NAME
+
+envSecrets:
+  S3_UPLOAD_KEY: description-generator-prod
+  S3_UPLOAD_SECRET: description-generator-prod
+  AWS_ACCESS_KEY_ID: description-generator-prod
+  AWS_SECRET_ACCESS_KEY: description-generator-prod
+  S3_UPLOAD_BUCKET: description-generator-prod
+  S3_UPLOAD_REGION: description-generator-prod
+  TOGETHER_API_KEY: description-generator-prod
+  MONGODB_URI: description-generator-prod
+  DB_NAME: description-generator-prod
+  COLLECTION_NAME: description-generator-prod
+
+  
+serviceAccount:
+  enabled: true

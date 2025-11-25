@@ -1,35 +1,69 @@
 import { MongoClient } from "mongodb";
+import { EJSON } from "bson";
 
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-let db = null;
+// Skip env validation during Next.js build process
+// Environment variables will be available at runtime in Kanopy
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build';
 
-export async function connectToDatabase(dbName, collectionName) {
-  if (db && client.topology && client.topology.isConnected()) {
-    return db.collection(collectionName);
+if (!isBuild) {
+  if (!process.env.MONGODB_URI) {
+    throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
   }
-
-  try {
-    await client.connect();
-    console.log("Connected successfully to MongoDB Atlas");
-    db = client.db(dbName);
-    return db.collection(collectionName);
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    throw error;
+  if (!process.env.DB_NAME) {
+    throw new Error('Invalid/Missing environment variable: "DB_NAME"');
   }
 }
 
-export async function closeDatabase() {
-  if (client && client.topology && client.topology.isConnected()) {
-    console.log("Closing MongoDB connection");
-    try {
-      await client.close();
-      console.log("MongoDB connection closed successfully");
-    } catch (error) {
-      console.error("Error closing MongoDB connection:", error);
-    }
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
+const dbName = process.env.DB_NAME || "default";
+const options = { };
+
+let client;
+let clientPromise;
+const changeStreams = new Map();
+
+if (!isBuild) {
+  if (!global._mongoClientPromise) {
+    client = new MongoClient(uri, options);
+    clientPromise = client.connect();
+    global._mongoClientPromise = clientPromise;
   } else {
-    console.log("MongoDB connection already closed or not initialized");
+    clientPromise = global._mongoClientPromise;
   }
+} else {
+  // Dummy promise during build
+  clientPromise = Promise.resolve({
+    db: () => ({
+      collection: () => ({
+        find: () => ({ toArray: () => [] }),
+        aggregate: () => ({ toArray: () => [] })
+      })
+    })
+  });
 }
+
+async function getChangeStream(filter, key) {
+  if (!changeStreams.has(key)) {
+    const client = await clientPromise;
+    const db = client.db(dbName);
+
+    const filterEJSON = EJSON.parse(JSON.stringify(filter));
+
+    const options = { fullDocument: 'updateLookup' };
+    const pipeline = [{ $match: filterEJSON }];
+    const changeStream = db.watch(pipeline, options);
+
+    changeStream.on("change", (change) => {
+      console.log("Change: ", change);
+    });
+
+    changeStream.on("error", (error) => {
+      console.log("Error: ", error);
+    });
+
+    changeStreams.set(key, changeStream);
+  }
+  return changeStreams.get(key);
+}
+
+export { clientPromise, dbName, getChangeStream };

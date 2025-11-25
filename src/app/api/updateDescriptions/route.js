@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase, closeDatabase } from "@/lib/mongodb";
+import { clientPromise, dbName } from "@/lib/mongodb";
 // Purpose: Push or Update descriptions for a specific priduct
 // Request: the product's descriptions yo update or add, the model, length and imageUrl
 // Return: The entire product document updated.
 
 export async function POST(request) {
-  const dbName = process.env.DB_NAME;
-  const collectionName = process.env.COLLECTION_NAME;
+  const collectionName = process.env.COLLECTION_NAME || "product";
 
   try {
     let { descriptions, model, length, imageUrl } = await request.json();
     console.log({ descriptions, model, length, imageUrl })
-    const collection = await connectToDatabase(dbName, collectionName);
+    const client = await clientPromise;
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
     const setDescriptionsPipeline = {}
     for (let index = 0; index < descriptions.length; index++) {
         const description = descriptions[index];

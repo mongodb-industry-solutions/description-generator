@@ -2,9 +2,17 @@ import Together from "together-ai";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-const together = new Together();
-
 export async function POST(req) {
+  // Check if API key is available at runtime
+  if (!process.env.TOGETHER_API_KEY) {
+    return new Response("TOGETHER_API_KEY environment variable is required", { status: 500 });
+  }
+  
+  // Initialize Together client at runtime when environment variables are available
+  const together = new Together({
+    apiKey: process.env.TOGETHER_API_KEY
+  });
+  
   const json = await req.json();
   const result = z
     .object({
