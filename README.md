@@ -1,4 +1,4 @@
-# Product Description Generator.
+# Product Description Generator
 
 ## Table of Contents
 <details>
