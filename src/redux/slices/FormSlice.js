@@ -11,7 +11,7 @@ export const MODELS = [
         value: "meta-llama/Llama-Vision-Free",
         label: "Llama 3.2 11B Free",
         isSelected: false,
-        isSelectedFilter: true,
+        isSelectedFilter: false,
         isDisabled:true
     },
     {
@@ -44,7 +44,7 @@ const FormSlice = createSlice({
         descriptionIsLoading: false,
         error: null,         // null or {msg: ""}
         image: null, // null or image URL
-        selectedModel: MODELS[0]?.value,
+        selectedModel: MODELS.find(model => model.isSelected === true)?.value,
         models: MODELS,
         selectedLength: LENGTHS[0]?.value,
         lengths: LENGTHS,
