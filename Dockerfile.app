@@ -4,5 +4,6 @@ COPY src/package*.json ./
 RUN npm install --legacy-peer-deps
 COPY src/ ./
 RUN npm run build
-EXPOSE 3000
+EXPOSE 8080
+ENV PORT=8080
 CMD ["npm", "run", "start"]

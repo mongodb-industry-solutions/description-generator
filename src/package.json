@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "AWS_PROFILE=default next dev -H 0.0.0.0 -p 3003",
     "build": "next build",
-    "start": "AWS_PROFILE=default next start -H 0.0.0.0 -p 3003",
+    "start": "next start -H 0.0.0.0 -p 8080",
     "lint": "next lint"
   },
   "dependencies": {

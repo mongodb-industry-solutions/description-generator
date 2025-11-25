@@ -1,0 +1,147 @@
+---
+# Drone object kind. Other types of objects are `secret` and `signature`.
+kind: pipeline
+# Execute this pipeline inside a Kubernetes pod.
+# see https://docs.drone.io/pipeline/kubernetes/overview/
+type: kubernetes
+# Name for this pipeline. Multiple pipelines can be defined for your project
+name: staging
+
+# Target specific host architecture types.  arm64 is recommended.  
+platform:
+  arch: amd64 # 'arm64' is also an option
+
+# trigger this pipeline only when the Github webhook is for an event on the
+# main branch
+trigger:
+  branch:
+    - staging
+
+# List of pipeline steps.
+steps:
+
+  - name: publish
+    image: plugins/kaniko-ecr
+    settings:
+      create_repository: true
+      registry: 795250896452.dkr.ecr.us-east-1.amazonaws.com
+      repo: industrysolutions/description-generator-frontend
+      tags:
+        - git-${DRONE_COMMIT_SHA:0:7}
+        - latest
+      dockerfile: Dockerfile.app
+      # Set build context to the root directory
+      context: .
+      access_key:
+        from_secret: ecr_access_key
+      secret_key:
+        from_secret: ecr_secret_key
+    when:
+      event:
+        - push
+
+  - name: deploy-staging
+    image: public.ecr.aws/kanopy/drone-helm:v3
+    settings:
+      chart: mongodb/web-app
+      chart_version: 4.25.0
+      add_repos: [mongodb=https://10gen.github.io/helm-charts]
+      namespace: industrysolutions
+      release: description-generator-staging
+      
+      # Use staging environment configuration
+      values_files: ["environments/staging.yaml"]
+      
+      # Override values dynamically from pipeline
+      values:
+        # Set application image
+        - "image.tag=git-${DRONE_COMMIT_SHA:0:7}"
+        - "image.repository=795250896452.dkr.ecr.us-east-1.amazonaws.com/industrysolutions/description-generator-frontend"
+        
+        # Ingress configuration
+        - "ingress.enabled=true"
+        - "ingress.hosts[0]=description-generator.industrysolutions.staging.corp.mongodb.com"
+        
+        # Enable service mesh
+        - "mesh.enabled=true"
+        
+        # Resource limits
+        - "resources.limits.cpu=1000m"
+        - "resources.limits.memory=1024Mi"
+        - "resources.requests.cpu=250m"
+        - "resources.requests.memory=256Mi"
+      
+      api_server: https://api.staging.corp.mongodb.com
+      kubernetes_token:
+        from_secret: staging_kubernetes_token
+    when:
+      event:
+        - push
+
+---
+kind: pipeline
+type: kubernetes
+name: production
+
+trigger:
+  branch:
+    - main  # or master, depending on your main branch name
+ 
+steps:
+  - name: publish
+    image: plugins/kaniko-ecr
+    settings:
+      create_repository: true
+      registry: 795250896452.dkr.ecr.us-east-1.amazonaws.com
+      repo: industrysolutions/description-generator
+      tags:
+        - git-${DRONE_COMMIT_SHA:0:7}
+        - latest
+      dockerfile: Dockerfile.app
+      # Set build context to the root directory
+      context: .
+      access_key:
+        from_secret: ecr_access_key
+      secret_key:
+        from_secret: ecr_secret_key
+    when:
+      event:
+        - push
+
+  - name: deploy-production
+    image: public.ecr.aws/kanopy/drone-helm:v3
+    settings:
+      chart: mongodb/web-app
+      chart_version: 4.25.0
+      add_repos: [mongodb=https://10gen.github.io/helm-charts]
+      namespace: industrysolutions
+      release: description-generator-prod
+      
+      # Use production environment configuration
+      values_files: ["environments/production.yaml"]
+      
+      # Override values dynamically from pipeline
+      values:
+        # Set application image
+        - "image.tag=git-${DRONE_COMMIT_SHA:0:7}"
+        - "image.repository=795250896452.dkr.ecr.us-east-1.amazonaws.com/industrysolutions/description-generator"
+        
+        # Ingress configuration
+        - "ingress.enabled=true"
+        - "ingress.hosts[0]=description-generator.industrysolutions.prod.corp.mongodb.com"
+        
+        # Enable service mesh
+        - "mesh.enabled=true"
+        
+        # Resource limits
+        - "resources.limits.cpu=1000m"
+        - "resources.limits.memory=1024Mi"
+        - "resources.requests.cpu=250m"
+        - "resources.requests.memory=256Mi"
+      
+      api_server: https://api.prod.corp.mongodb.com
+      kubernetes_token:
+        from_secret: prod_kubernetes_token
+    when:
+      event:
+        - push

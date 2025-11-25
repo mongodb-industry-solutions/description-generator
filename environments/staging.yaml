@@ -1,0 +1,66 @@
+# Staging environment configuration for Description Generator
+# This file configures the Kanopy deployment for staging
+
+envSecrets:
+  S3_UPLOAD_KEY: description-generator-staging
+  S3_UPLOAD_SECRET: description-generator-staging
+  AWS_ACCESS_KEY_ID: description-generator-staging
+  AWS_SECRET_ACCESS_KEY: description-generator-staging
+  S3_UPLOAD_BUCKET: description-generator-staging
+  S3_UPLOAD_REGION: description-generator-staging
+  TOGETHER_API_KEY: description-generator-staging
+  MONGODB_URI: description-generator-staging
+  DB_NAME: description-generator-staging
+  COLLECTION_NAME: description-generator-staging
+
+  
+# Service account configuration
+serviceAccount:
+  create: true
+  name: description-generator-staging-sa
+
+# Health check configuration
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+# Resource limits for staging
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+# Service mesh configuration
+mesh:
+  enabled: true
+  
+# Horizontal Pod Autoscaler
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+# Container port
+containerPort: 8080
