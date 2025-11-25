@@ -17,7 +17,7 @@ import DescriptionInput from "@/components/descriptionInput/DescriptionInput";
 import { fetchDescriptions, fetchProducts, updateDescriptionsToMongoDB } from '@/lib/api';
 import { setInitialLoad, setOpenedProductDetails, setProducts, updateProduct } from '@/redux/slices/ProductsSlice';
 import TextInput from '@leafygreen-ui/text-input';
-import { getProductFromObjectId, setProductImageInFormFromObjectId } from '@/lib/helpers';
+import { getProductFromObjectId, setProductImageInFormFromObjectId, getDisplayImageUrl } from '@/lib/helpers';
 import { setLanguage, setLength, setModel, setImage, setResult, setGeneratingDescription } from '@/redux/slices/FormSlice';
 import DescriptionOutput from '@/components/descriptionOutput/DescriptionOutput';
 import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, closeAlert, closeAlertWithDelay } from '@/lib/alerts';
@@ -223,7 +223,7 @@ export default function Home() {
                     <h4>Generated descriptions</h4>
                     {
                       result.imageUrl && <Image
-                        src={result?.imageUrl}
+                        src={getDisplayImageUrl(result.imageUrl)}
                         width={100}
                         height={100}
                         style={{ objectFit: "contain", padding: '4px' }}

@@ -8,7 +8,7 @@ import FileIcon from '@leafygreen-ui/icon/dist/File';
 
 import styles from "./imageUpload.module.css";
 import { setImage } from '@/redux/slices/FormSlice';
-import { uploadFile } from '@/lib/api';
+import { getDisplayImageUrl } from '@/lib/helpers';
 
 const ImageUpload = (props) => {
   const dispatch = useDispatch();
@@ -40,7 +40,7 @@ const ImageUpload = (props) => {
               </IconButton>
             </div>
             <Image
-              src={image}
+              src={getDisplayImageUrl(image)}
               width={120}
               height={120}
               style={{ objectFit: "contain", padding: '4px', marginTop: '-20px' }}

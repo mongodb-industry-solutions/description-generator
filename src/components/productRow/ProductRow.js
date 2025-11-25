@@ -10,7 +10,7 @@ import IconButton from '@leafygreen-ui/icon-button';
 import CopyIcon from '@leafygreen-ui/icon/dist/Copy';
 import SparkleIcon from '@leafygreen-ui/icon/dist/Sparkle';
 import DescriptionOutput from '../descriptionOutput/DescriptionOutput';
-import { setProductImageInFormFromObjectId } from '@/lib/helpers';
+import { getDisplayImageUrl, setProductImageInFormFromObjectId } from '@/lib/helpers';
 
 const ProductRow = (props) => {
     const router = useRouter();
@@ -18,7 +18,8 @@ const ProductRow = (props) => {
 
     const selectedModel = useSelector(state => state.Form.models?.find(model => model.isSelectedFilter === true).value)
     const selectedLength = useSelector(state => state.Form.lengths?.find(length => length.isSelectedFilter === true).value)
-
+    if(product._id==='67619fa874cb39656c9a91e7')
+    console.log('ProductRow render', `${selectedLength}_${selectedModel.replaceAll('.', '')}`)
     const onCopyIdClick = () => {
         const textArea = document.createElement("textarea");
         textArea.value = product._id;
@@ -51,7 +52,7 @@ const ProductRow = (props) => {
                 <div className='cursorPointer'>
                     <Image
                         onClick={() => onSeeFullDocument(product)}
-                        src={product?.imageUrl}
+                        src={getDisplayImageUrl(product?.imageUrl)}
                         width={100}
                         height={100}
                         style={{ objectFit: "contain", padding: '4px' }}

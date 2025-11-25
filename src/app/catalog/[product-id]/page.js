@@ -11,7 +11,7 @@ import { addOperationAlert, addSucAutoCloseAlertHnd, addWarnAutoCloseAlertHnd, c
 import { deleteDescriptions, deleteFile, deleteProductFromMDB, fetchProducts } from "@/lib/api";
 import { deleteProduct, deleteProductDescriptions, setInitialLoad, setOpenedProductDetails, setProducts } from "@/redux/slices/ProductsSlice";
 import { Spinner } from 'react-bootstrap';
-import { getProductFromObjectId } from '@/lib/helpers';
+import { getProductFromObjectId, getDisplayImageUrl } from '@/lib/helpers';
 
 const ProductPage = () => {
     const dispatch = useDispatch();
@@ -143,7 +143,7 @@ const ProductPage = () => {
                     {
                         openedProductDetails &&
                         <Image
-                            src={openedProductDetails?.imageUrl}
+                            src={getDisplayImageUrl(openedProductDetails?.imageUrl)}
                             width={120}
                             height={120}
                             style={{ objectFit: "contain", padding: '4px' }}

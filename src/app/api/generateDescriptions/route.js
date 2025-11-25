@@ -1,6 +1,7 @@
 import Together from "together-ai";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(req) {
   // Check if API key is available at runtime
@@ -28,6 +29,80 @@ export async function POST(req) {
   }
 
   const { languages, imageUrl, model, length } = result.data;
+
+  // Handle different image sources for Together AI processing
+  let aiImageData = null;
+  
+  if (imageUrl) {
+    try {
+      // Check if it's an Amazon image - pass directly as URL
+      if (imageUrl.includes('m.media-amazon.com') || imageUrl.includes('amazon.com')) {
+        aiImageData = imageUrl; // Use URL directly for Amazon images
+      } else {
+        // For S3 images, extract key and fetch as base64
+        let imageKey = null;
+        
+        if (imageUrl.includes('/api/images?key=')) {
+          const urlObj = new URL(imageUrl, 'http://localhost');
+          imageKey = decodeURIComponent(urlObj.searchParams.get('key') || '');
+        } else if (imageUrl.includes('.s3.') || imageUrl.includes('amazonaws.com')) {
+          // Extract key from direct S3 URL - handle URL encoding properly
+          const url = new URL(imageUrl);
+          imageKey = decodeURIComponent(url.pathname.substring(1)); // Remove leading slash and decode
+        }
+
+        if (imageKey) {
+          // Fetch image from S3 using your credentials
+          const s3 = new S3Client({
+            region: process.env.S3_UPLOAD_REGION,
+            credentials: {
+              accessKeyId: process.env.S3_UPLOAD_KEY,
+              secretAccessKey: process.env.S3_UPLOAD_SECRET,
+            },
+          });
+
+          const command = new GetObjectCommand({
+            Bucket: process.env.S3_UPLOAD_BUCKET,
+            Key: imageKey, // Use the properly decoded key
+          });
+
+          console.log('Fetching S3 object with key:', imageKey);
+          const response = await s3.send(command);
+          const imageBuffer = await response.Body.transformToByteArray();
+          const base64Image = Buffer.from(imageBuffer).toString('base64');
+          
+          // Determine content type
+          let contentType = response.ContentType || 'image/jpeg';
+          if (contentType === 'application/octet-stream') {
+            const extension = imageKey.toLowerCase().split('.').pop();
+            switch (extension) {
+              case 'jpg':
+              case 'jpeg':
+                contentType = 'image/jpeg';
+                break;
+              case 'png':
+                contentType = 'image/png';
+                break;
+              case 'webp':
+                contentType = 'image/webp';
+                break;
+              default:
+                contentType = 'image/jpeg';
+            }
+          }
+          
+          aiImageData = `data:${contentType};base64,${base64Image}`;
+        }
+      }
+    } catch (error) {
+      console.error('Error processing image:', error);
+      return new Response(`Error processing image: ${error.message}`, { status: 500 });
+    }
+  }
+
+  if (!aiImageData) {
+    return new Response('Image is required for description generation', { status: 400 });
+  }
 
   let descriptions;
   let rawResponse;
@@ -63,7 +138,7 @@ export async function POST(req) {
             {
               type: "image_url",
               image_url: {
-                url: imageUrl,
+                url: aiImageData,
               },
             },
           ],
@@ -73,7 +148,14 @@ export async function POST(req) {
     console.log("--------  API CALL RES --------------\n", res);
 
     rawResponse = res.choices[0].message?.content;
-    descriptions = JSON.parse(rawResponse || "[]");
+    
+    // Clean up markdown code blocks if present
+    let cleanedResponse = rawResponse || "[]";
+    if (cleanedResponse.includes('```json')) {
+      cleanedResponse = cleanedResponse.replace(/```json\s*/, '').replace(/\s*```$/, '');
+    }
+    
+    descriptions = JSON.parse(cleanedResponse);
     console.log("--------  API CALL ENDED --------------");
     console.log({ rawResponse, descriptions });
   } catch (error) {
