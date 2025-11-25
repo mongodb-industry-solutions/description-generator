@@ -6,6 +6,10 @@
 # - S3_UPLOAD_KEY, S3_UPLOAD_SECRET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 # - S3_UPLOAD_BUCKET, S3_UPLOAD_REGION, TOGETHER_API_KEY
 # - MONGODB_URI, DB_NAME, COLLECTION_NAME
+
+env:
+  NODE_ENV: staging
+
 envSecrets:
   S3_UPLOAD_KEY: description-generator-staging
   S3_UPLOAD_SECRET: description-generator-staging
@@ -19,45 +23,5 @@ envSecrets:
   COLLECTION_NAME: description-generator-staging
 
   
-# Service account configuration
 serviceAccount:
-  create: true
-  name: description-generator-staging-sa
-
-# Resource limits for staging
-resources:
-  limits:
-    cpu: 1000m
-    memory: 1024Mi
-  requests:
-    cpu: 250m
-    memory: 256Mi
-
-# Ingress configuration
-ingress:
   enabled: true
-  className: "nginx"
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-
-# Service mesh configuration
-mesh:
-  enabled: true
-  
-# Horizontal Pod Autoscaler
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 3
-  targetCPUUtilizationPercentage: 80
-
-# Health check probes (correct format for web-app chart)
-healthcheck:
-  enabled: true
-  path: /
-  port: 8080
-
-# Container configuration
-container:
-  port: 8080
