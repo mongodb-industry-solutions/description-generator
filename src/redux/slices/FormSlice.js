@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const MODELS = [
     {
-        value: "Qwen/Qwen2.5-VL-72B-Instruct",
-        label: "Qwen2.5 Vision Language 72B Instruct",
+        value: "ServiceNow-AI/Apriel-1.5-15b-Thinker",
+        label: "Apriel 1.5 15b Thinker",
         isSelected: false,
         isSelectedFilter: false
     },

@@ -19,12 +19,23 @@ export async function fetchDescriptions(body) {
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    console.log(response)
-    let error = response;
-    if (typeof error !== 'object' || error === null) {
-      error = await response.json();
+    let errorData;
+    try {
+      errorData = await response.json();
+    } catch (parseError) {
+      // If parsing fails, create a fallback error object
+      errorData = {
+        error: "Response parsing failed",
+        message: `HTTP ${response.status}: ${response.statusText}`,
+        code: "PARSE_ERROR"
+      };
     }
-    return {status: error.status, message: error?.error?.message || 'Unknown error' }
+    console.log(errorData)
+    return {
+      status: response.status, 
+      message: errorData?.message || errorData?.error || 'Unknown error', 
+      ...errorData 
+    }
   }
   const descriptions = await response.json();
   console.log(descriptions)
