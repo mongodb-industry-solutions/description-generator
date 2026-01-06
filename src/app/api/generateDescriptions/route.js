@@ -4,15 +4,23 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(req) {
-  // Check if API key is available at runtime
-  if (!process.env.TOGETHER_API_KEY) {
-    return new Response("TOGETHER_API_KEY environment variable is required", { status: 500 });
-  }
-  
-  // Initialize Together client at runtime when environment variables are available
-  const together = new Together({
-    apiKey: process.env.TOGETHER_API_KEY
-  });
+  try {
+    // Check if API key is available at runtime
+    if (!process.env.TOGETHER_API_KEY) {
+      return Response.json(
+        { 
+          error: "API key configuration error",
+          message: "TOGETHER_API_KEY environment variable is required",
+          code: "MISSING_API_KEY"
+        }, 
+        { status: 500 }
+      );
+    }
+    
+    // Initialize Together client at runtime when environment variables are available
+    const together = new Together({
+      apiKey: process.env.TOGETHER_API_KEY
+    });
   
   const json = await req.json();
   const result = z
@@ -25,7 +33,15 @@ export async function POST(req) {
     .safeParse(json);
 
   if (result.error) {
-    return new Response(result.error.message, { status: 422 });
+    return Response.json(
+      { 
+        error: "Validation error",
+        message: "Invalid request parameters",
+        details: result.error.message,
+        code: "VALIDATION_ERROR"
+      }, 
+      { status: 422 }
+    );
   }
 
   const { languages, imageUrl, model, length } = result.data;
@@ -96,12 +112,27 @@ export async function POST(req) {
       }
     } catch (error) {
       console.error('Error processing image:', error);
-      return new Response(`Error processing image: ${error.message}`, { status: 500 });
+      return Response.json(
+        { 
+          error: "Image processing error",
+          message: "Failed to process the provided image",
+          details: error.message,
+          code: "IMAGE_ERROR"
+        }, 
+        { status: 500 }
+      );
     }
   }
 
   if (!aiImageData) {
-    return new Response('Image is required for description generation', { status: 400 });
+    return Response.json(
+      { 
+        error: "Missing image data",
+        message: "Image is required for description generation",
+        code: "NO_IMAGE"
+      }, 
+      { status: 400 }
+    );
   }
 
   let descriptions;
@@ -159,44 +190,84 @@ export async function POST(req) {
     console.log("--------  API CALL ENDED --------------");
     console.log({ rawResponse, descriptions });
   } catch (error) {
-    const productDescriptionSchema = z.array(
-      z.object({
-        model: z.string().describe("the model specified"),
-        language: z.string().describe("the language specified"),
-        description: z
-          .string()
-          .describe("the description of the product in the language specified")
-      }),
-    );
-    const jsonSchema = zodToJsonSchema(
-      productDescriptionSchema,
-      "productDescriptionSchema",
-    );
+    console.error('------- API ERROR --------\n', error);
+    
+    // Check if we have a response to try parsing
+    if (rawResponse && rawResponse.trim()) {
+      try {
+        const productDescriptionSchema = z.array(
+          z.object({
+            model: z.string().describe("the model specified"),
+            language: z.string().describe("the language specified"),
+            description: z
+              .string()
+              .describe("the description of the product in the language specified")
+          }),
+        );
+        const jsonSchema = zodToJsonSchema(
+          productDescriptionSchema,
+          "productDescriptionSchema",
+        );
 
-    const extract = await together.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content:
-            "Parse out the valid JSON from this text. Only answer in JSON.",
-        },
-        {
-          role: "user",
-          content: rawResponse || "",
-        },
-      ],
-      model: model,// "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-      response_format: { type: "json_object", schema: jsonSchema },
-    });
+        const extract = await together.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "Parse out the valid JSON from this text. Only answer in JSON.",
+            },
+            {
+              role: "user",
+              content: rawResponse,
+            },
+          ],
+          model: model,
+          response_format: { type: "json_object", schema: jsonSchema },
+        });
 
-    descriptions = JSON.parse(extract?.choices?.[0]?.message?.content || "[]");
-    console.error('------- ERROR DESC --------\n', descriptions);
-    console.error('------- ERROR ERR--------\n', error);
-    return Response.json(error);
-
+        descriptions = JSON.parse(extract?.choices?.[0]?.message?.content || "[]");
+        console.log('------- PARSED FROM FALLBACK --------\n', descriptions);
+      } catch (fallbackError) {
+        console.error('------- FALLBACK PARSING FAILED --------\n', fallbackError);
+        // Return a user-friendly error message
+        return Response.json(
+          { 
+            error: "Generation failed", 
+            message: "Failed to generate descriptions. Please try again.",
+            details: error.message,
+            code: error.code || "GENERATION_ERROR"
+          }, 
+          { status: 500 }
+        );
+      }
+    } else {
+      // No response to parse, return error directly
+      console.error('------- NO RESPONSE TO PARSE --------');
+      return Response.json(
+        { 
+          error: "API service error",
+          message: "Failed to generate descriptions. The AI service returned an error.", 
+          details: error.message,
+          code: error.code || "API_ERROR"
+        }, 
+        { status: 500 }
+      );
+    }
   }
 
   return Response.json({descriptions, model, length, imageUrl});
+  } catch (unhandledError) {
+    console.error('------- UNHANDLED ERROR --------\n', unhandledError);
+    return Response.json(
+      { 
+        error: "Unexpected error",
+        message: "An unexpected error occurred while processing your request",
+        details: unhandledError.message,
+        code: "UNEXPECTED_ERROR"
+      }, 
+      { status: 500 }
+    );
+  }
 }
 
 export const runtime = "edge";
