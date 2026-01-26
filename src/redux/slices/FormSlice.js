@@ -15,7 +15,7 @@ export const MODELS = [
         isDisabled:true
     },
     {
-        value: "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8", //meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 TODO
+        value: "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
         label: "Llama 4 Maverick",
         isSelected: true,
         isSelectedFilter: true,
