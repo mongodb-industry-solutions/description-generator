@@ -170,7 +170,7 @@ export default function Home() {
             </div>
             <DescriptionInput
               title="Model"
-              description="Select the Llama 3.2 vision model you want to use."
+              description="Select the vision model you want to use."
               options={modelOptions}
               onSelectionChange={onModelChange}
             />
