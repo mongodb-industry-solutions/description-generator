@@ -69,7 +69,7 @@ const DescriptionOutput = (props) => {
     }
 
     return (
-        <div className='mb-2'>
+        <div className='mb-2 DescriptionOutput'>
             <h5 className='text-start d-flex'>
                 {languageLabel}
                 {
