@@ -2,21 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const MODELS = [
     {
-        value: "ServiceNow-AI/Apriel-1.5-15b-Thinker",
-        label: "Apriel 1.5 15b Thinker",
+        value: "Qwen/Qwen3.5-9B",
+        label: "Qwen/Qwen3.5-9B",
         isSelected: false,
         isSelectedFilter: false
     },
     {
-        value: "meta-llama/Llama-Vision-Free",
-        label: "Llama 3.2 11B Free",
-        isSelected: false,
-        isSelectedFilter: false,
-        isDisabled:true
-    },
-    {
-        value: "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
-        label: "Llama 4 Maverick",
+        value: "moonshotai/Kimi-K2.5",
+        label: "moonshotai/Kimi-K2.5",
         isSelected: true,
         isSelectedFilter: true,
     },
