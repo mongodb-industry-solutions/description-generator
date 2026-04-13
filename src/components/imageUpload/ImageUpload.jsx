@@ -52,12 +52,12 @@ const ImageUpload = (props) => {
             <strong className='text-secondary'>Loading...</strong>
           </div>
           : <div 
-            onClick={() => imageInputRef.current.click()} 
+            style={{height: '150px', minHeight: '50px'}}
             className={`${styles.imageUploadChildContainer} ${styles.cursorPointer} d-flex flex-column align-items-center justify-content-center`}
           >
-            <UploadIcon size="xlarge" className='' />
+            <UploadIcon size="xlarge" className='d-none' />
             <FileIcon size="xlarge" className='d-none' />
-            <p className='mt-2'>Upload product image</p>
+            <p className='mt-2'>Select image from inside the catalog, or use sample shortcut below</p>
             <p className='mt-2 d-none'>Product image</p>
             <input
               ref={imageInputRef}
