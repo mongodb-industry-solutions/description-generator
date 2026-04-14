@@ -133,7 +133,7 @@ export const formPage = [
                         body: [
                             'First, by pasting the ObjectId of a product inside the input field and clicking on “Upload”.',
                             'Second one, by clicking on the Sprinkle button inside the catalog.',
-                            'Third one, by clicking on “Use sample image from catalog” this will always load the same product sample image of a shoe. ',
+                            'And finally, by clicking on “Use sample image from catalog” this will always load the same product sample image of a shoe. ',
                         ]
                     },
                     {
