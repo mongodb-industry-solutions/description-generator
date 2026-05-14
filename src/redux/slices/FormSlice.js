@@ -4,15 +4,16 @@ export const MODELS = [
     {
         value: "Qwen/Qwen3.5-9B",
         label: "Qwen/Qwen3.5-9B",
+        isSelected: true,
+        isSelectedFilter: true
+    },
+        {
+        value: "moonshotai/Kimi-K2.6",
+        label: "moonshotai/Kimi-K2.6",
         isSelected: false,
         isSelectedFilter: false
     },
-    {
-        value: "moonshotai/Kimi-K2.5",
-        label: "moonshotai/Kimi-K2.5",
-        isSelected: true,
-        isSelectedFilter: true,
-    },
+
 ];
 export const LANGUAGES = [
     { value: "en", label: "English", isSelected: true},

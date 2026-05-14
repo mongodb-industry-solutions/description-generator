@@ -129,12 +129,11 @@ export const formPage = [
                 body: [
                 
                     {
-                        heading: "You have 4 options in which you can select a product to generate the description",
+                        heading: "You have 3 options in which you can select a product to generate the description",
                         body: [
                             'First, by pasting the ObjectId of a product inside the input field and clicking on “Upload”.',
                             'Second one, by clicking on the Sprinkle button inside the catalog.',
-                            'Third one, by clicking on “Use sample image from catalog” this will always load the same product sample image of a shoe. ',
-                            'And lastly, by clicking on “Upload product image” this will allow you to do the demo with an image that you Upload. Take advantage of this by uploading a product similar to what your prospect would like to see.'
+                            'And finally, by clicking on “Use sample image from catalog” this will always load the same product sample image of a shoe. ',
                         ]
                     },
                     {
