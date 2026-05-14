@@ -5,7 +5,7 @@ export const MODELS = [
         value: "Qwen/Qwen3.5-9B",
         label: "Qwen/Qwen3.5-9B",
         isSelected: true,
-        isSelectedFilter: false
+        isSelectedFilter: true
     },
         {
         value: "moonshotai/Kimi-K2.6",
