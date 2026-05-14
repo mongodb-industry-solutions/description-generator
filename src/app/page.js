@@ -144,10 +144,10 @@ export default function Home() {
       <div className="container" onClick={() => console.log(result)}>
         <div className="row ">
           <div className={`${styles.leftSide} col-12 col-md-6 p-3 mb-3 text-center`}>
-            <p className='text-secondary'>Upload an image to generate descriptions in multiple languages.</p>
+            <p className='text-secondary'>Generate descriptions in multiple languages.</p>
             <div className={`${styles.cursorPointer} d-flex align-items-end mb-3`}>
               <TextInput
-                label="Use product from catalog"
+                label="Use a product's image from the catalog"
                 placeholder="Enter ObjectId"
                 onChange={event => {
                   console.log(event)
@@ -161,7 +161,7 @@ export default function Home() {
                 onClick={() => onLoadImageFromObjectId()}
                 disabled={disableUpload}
               >
-                Upload
+                Load image
               </BSButton>
             </div>
             <ImageUpload image={image} setImage={setImage} uploadToS3={uploadToS3} />
